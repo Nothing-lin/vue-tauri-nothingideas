@@ -21,8 +21,10 @@ async function greet() {
 
   <div class="mb-4">
     <el-button>Default</el-button>
-    <el-button type="primary">Primary</el-button>
-    <el-button type="success">Success</el-button>
+    <router-link  to="/One">我是1</router-link>
+    <router-link  to="/Two">我是2</router-link>
+    <el-button type="primary" @Click="$router.push('/One')">One</el-button>
+    <el-button type="success" @Click="$router.push('/Two')">Two</el-button>
     <el-button type="info">Info</el-button>
     <el-button type="warning">Warning</el-button>
     <el-button type="danger">Danger</el-button>
