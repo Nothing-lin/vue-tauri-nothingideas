@@ -19,9 +19,10 @@
     },
     "windows": [
       {
-        "title": "nothing-ideas-tauri",
-        "width": 800,
-        "height": 600
+        "title": "想法创建流程",
+        "width": 1000,
+        "height": 800,
+        "center": true
       }
     ],
     "security": {
