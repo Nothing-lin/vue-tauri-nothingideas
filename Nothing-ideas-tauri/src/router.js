@@ -1,5 +1,5 @@
 import { createRouter,createWebHashHistory } from "vue-router";
-import One from "./components/One.vue"
+import Detail from "./components/Detail.vue"
 import Two from "./components/Two.vue"
 import Nindex from "./components/Nindex.vue"
 
@@ -12,8 +12,8 @@ const router  = createRouter({
             component:Nindex
         },
         {
-            path:"/One",
-            component:One
+            path:"/Detail",
+            component:Detail
         },
         {
             path:"/Two",

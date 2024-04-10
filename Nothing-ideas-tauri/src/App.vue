@@ -2,7 +2,7 @@
 
 </script>
 
-<template>
+<template style="margin: 0; padding: 0;">
   
     <router-view></router-view>
 

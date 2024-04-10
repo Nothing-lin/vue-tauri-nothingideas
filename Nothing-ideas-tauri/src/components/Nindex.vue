@@ -23,7 +23,7 @@
                         <div class="item" style="margin-top: 15px; margin-bottom: 15px;">
                             <el-button plain size="mini">Button 1</el-button>
                             <el-button plain :type="n%2 === 0? 'danger' : 'success'" size="mini">Button 2</el-button>
-                            <span class="text" style="margin-left: 10px;">Text</span>
+                            <span class="text" style="margin-left: 10px; cursor: pointer;" @click="$router.push('/Detail')">Text</span>
                         </div>
                     </template>
 
