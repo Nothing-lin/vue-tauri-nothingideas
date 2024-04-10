@@ -1,3 +1,31 @@
+<script setup>
+import Database from "tauri-plugin-sql-api";
+
+async function MyDB() {
+    // sqlite. The path is relative to `tauri::api::path::BaseDirectory::App`.
+    const db = await Database.load("sqlite:NothingIdeas.db");
+    console.log(db);
+
+    // 创建一个测试表
+    await db.execute(
+        "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, name TEXT, age INTEGER)"
+    );
+
+    // 插入一条数据
+    await db.execute("INSERT INTO test (name, age) VALUES (?,?)", ["Alice", 25]);
+
+    // 查询数据
+    const rows = await db.select("SELECT * FROM test");
+    console.log(rows);
+
+    // 关闭数据库连接
+    await db.close();
+}
+
+
+</script>
+
+
 /** 首页 */
 <template>
     <div class="common-layout">
@@ -14,6 +42,7 @@
                             <el-button-group class="btn-group">
                                 <el-button type="primary" size="mini">新增</el-button>
                                 <el-button type="danger" size="mini">删除</el-button>
+                                <el-button size="mini" @click="MyDB">测试按钮</el-button>
                             </el-button-group>
                         </div>
                     </template>
