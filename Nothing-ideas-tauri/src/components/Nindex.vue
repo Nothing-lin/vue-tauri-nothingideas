@@ -1,43 +1,16 @@
-<script setup>
-import Database from "tauri-plugin-sql-api";
-
-async function MyDB() {
-    // sqlite. The path is relative to `tauri::api::path::BaseDirectory::App`.
-    const db = await Database.load("sqlite:NothingIdeas.db");
-    console.log(db);
-
-    // 创建一个测试表
-    await db.execute(
-        "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, name TEXT, age INTEGER)"
-    );
-
-    // 插入一条数据
-    await db.execute("INSERT INTO test (name, age) VALUES (?,?)", ["Alice", 25]);
-
-    // 查询数据
-    const rows = await db.select("SELECT * FROM test");
-    console.log(rows);
-
-    // 关闭数据库连接
-    await db.close();
-}
-
-
-</script>
-
-
 /** 首页 */
 <template>
     <div class="common-layout">
         <el-container>
-            <el-header>Header</el-header>
+            <el-header v-for="i in rows">Header：{{ i.name }}</el-header>
 
 
             <el-main>
                 <el-card style="max-width: 70vw; margin: auto;">
                     <!-- 页头 -->
                     <template #header>
-                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="card-header"
+                            style="display: flex; justify-content: space-between; align-items: center;">
                             <span class="header-title">nothingIdeas想法流程</span>
                             <el-button-group class="btn-group">
                                 <el-button type="primary" size="mini">新增</el-button>
@@ -51,14 +24,15 @@ async function MyDB() {
                     <template v-for="n in 10">
                         <div class="item" style="margin-top: 15px; margin-bottom: 15px;">
                             <el-button plain size="mini">Button 1</el-button>
-                            <el-button plain :type="n%2 === 0? 'danger' : 'success'" size="mini">Button 2</el-button>
-                            <span class="text" style="margin-left: 10px; cursor: pointer;" @click="$router.push('/Detail')">Text</span>
+                            <el-button plain :type="n % 2 === 0 ? 'danger' : 'success'" size="mini">Button 2</el-button>
+                            <span class="text" style="margin-left: 10px; cursor: pointer;"
+                                @click="$router.push('/Detail')">Text</span>
                         </div>
                     </template>
 
                     <!-- 页脚 -->
                     <template #footer>
-                        
+
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <el-pagination background layout="prev, pager, next" :total="1000" />
 
@@ -76,3 +50,30 @@ async function MyDB() {
     </div>
 </template>
   
+
+<script>
+import Database from "tauri-plugin-sql-api";
+
+export default {
+    data() {
+        return {
+            rows: [] // 初始化 rows 数据
+        };
+    },
+    async created() {
+        const db = await Database.load("sqlite:NothingIdeas.db");
+        const rows = await db.select("SELECT * FROM test");
+        this.rows = rows; // 将查询结果赋值给 rows
+        await db.close();
+        console.log(rows);
+    },
+    methods: {
+        async testButton() {
+            const db = await Database.load("sqlite:NothingIdeas.db");
+            // 在这里执行你的测试按钮操作
+            await db.close();
+        }
+    }
+};
+
+</script>
