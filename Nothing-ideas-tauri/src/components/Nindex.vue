@@ -2,7 +2,7 @@
 <template>
     <div class="common-layout">
         <el-container>
-            <el-header v-for="i in rows">Header：{{ i.name }}</el-header>
+            <el-header >Header</el-header>
 
 
             <el-main>
@@ -21,12 +21,12 @@
                     </template>
 
                     <!-- 内容  -->
-                    <template v-for="n in 10">
+                    <template v-for="item in NothingProject">
                         <div class="item" style="margin-top: 15px; margin-bottom: 15px;">
                             <el-button plain size="mini">Button 1</el-button>
-                            <el-button plain :type="n % 2 === 0 ? 'danger' : 'success'" size="mini">Button 2</el-button>
+                            <el-button plain :type="item.project_status === '未闭环' ? 'danger' : 'success'" size="mini">{{item.project_status}}</el-button>
                             <span class="text" style="margin-left: 10px; cursor: pointer;"
-                                @click="$router.push('/Detail')">Text</span>
+                                @click="$router.push('/Detail')">{{item.project_title}}</span>
                         </div>
                     </template>
 
@@ -34,7 +34,14 @@
                     <template #footer>
 
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <el-pagination background layout="prev, pager, next" :total="1000" />
+                            <el-pagination 
+                                background 
+                                layout="prev, pager, next" 
+                                :total="totalItems"
+                                :current-page.sync="currentPage"
+                                :page-size="pageSize"
+                                @current-change="handleCurrentChange"
+                                 />
 
                             <el-button-group class="btn-group">
                                 <el-button type="primary" size="mini" plain>全部</el-button>
@@ -55,25 +62,53 @@
 import Database from "tauri-plugin-sql-api";
 
 export default {
-    data() {
-        return {
-            rows: [] // 初始化 rows 数据
-        };
-    },
-    async created() {
-        const db = await Database.load("sqlite:NothingIdeas.db");
-        const rows = await db.select("SELECT * FROM test");
-        this.rows = rows; // 将查询结果赋值给 rows
-        await db.close();
-        console.log(rows);
-    },
-    methods: {
-        async testButton() {
-            const db = await Database.load("sqlite:NothingIdeas.db");
-            // 在这里执行你的测试按钮操作
-            await db.close();
-        }
+  data() {
+    return {
+      NothingProject: [],    // 数据列表
+      totalItems: 0,         // 总数据条数
+      currentPage: 1,        // 当前页码
+      pageSize: 10           // 每页显示条数
+    };
+  },
+  computed: {
+    // 根据当前页码和每页显示条数，计算出当前页的数据
+    paginatedProjects() {
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      return this.NothingProject.slice(startIndex, endIndex);
     }
-};
+  },
+  async created() {
+    await this.fetchProjects();
+  },
+  methods: {
+    async fetchProjects() {
+      const db = await Database.load("sqlite:NothingIdeas.db");
 
+      // 查询总数据条数
+      const totalCount = await db.select("SELECT COUNT(*) as count FROM nothing_project");
+      this.totalItems = totalCount[0].count;
+
+      // 查询当前页数据
+      const offset = (this.currentPage - 1) * this.pageSize;
+      const query = `SELECT * FROM nothing_project LIMIT ${this.pageSize} OFFSET ${offset}`;
+      const NothingProject = await db.select(query);
+
+      this.NothingProject = NothingProject; // 更新数据列表
+      await db.close();
+    },
+    async handleCurrentChange(page) {
+      this.currentPage = page; // 更新当前页码
+      await this.fetchProjects(); // 重新获取数据
+    },
+    async testButton() {
+      const db = await Database.load("sqlite:NothingIdeas.db");
+      // 执行测试按钮操作，例如插入数据等
+      await db.close();
+    },
+    goToDetail(item) {
+      this.$router.push(`/Detail?id=${item.id}`); // 跳转到详情页面，传递项目 ID
+    }
+  }
+};
 </script>
