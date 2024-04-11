@@ -1,60 +1,54 @@
 /** 首页 */
 <template>
-    <div class="common-layout">
-        <el-container>
-            <el-header >Header</el-header>
+  <div class="common-layout">
+    <el-container>
+      <el-header>Header</el-header>
 
 
-            <el-main>
-                <el-card style="max-width: 70vw; margin: auto;">
-                    <!-- 页头 -->
-                    <template #header>
-                        <div class="card-header"
-                            style="display: flex; justify-content: space-between; align-items: center;">
-                            <span class="header-title">nothingIdeas想法流程</span>
-                            <el-button-group class="btn-group">
-                                <el-button type="primary" size="mini">新增</el-button>
-                                <el-button type="danger" size="mini">删除</el-button>
-                                <el-button size="mini" @click="MyDB">测试按钮</el-button>
-                            </el-button-group>
-                        </div>
-                    </template>
+      <el-main>
+        <el-card style="max-width: 70vw; margin: auto;">
+          <!-- 页头 -->
+          <template #header>
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="header-title">nothingIdeas想法流程</span>
+              <el-button-group class="btn-group">
+                <el-button type="primary" size="mini">新增</el-button>
+                <el-button type="danger" size="mini">删除</el-button>
+                <el-button size="mini" @click="testButton">测试按钮</el-button>
+              </el-button-group>
+            </div>
+          </template>
 
-                    <!-- 内容  -->
-                    <template v-for="item in NothingProject">
-                        <div class="item" style="margin-top: 15px; margin-bottom: 15px;">
-                            <el-button plain size="mini">Button 1</el-button>
-                            <el-button plain :type="item.project_status === '未闭环' ? 'danger' : 'success'" size="mini">{{item.project_status}}</el-button>
-                            <span class="text" style="margin-left: 10px; cursor: pointer;"
-                                @click="$router.push('/Detail')">{{item.project_title}}</span>
-                        </div>
-                    </template>
+          <!-- 内容  -->
+          <template v-for="item in NothingProject">
+            <div class="item" style="margin-top: 15px; margin-bottom: 15px;">
+              <el-button plain size="mini" style="width: 60px;">{{daysSinceCreation(new Date(item.project_create_time))}}天</el-button>
+              <el-button plain :type="item.project_status === '未闭环' ? 'danger' : 'success'"
+                size="mini">{{ item.project_status }}</el-button>
+              <span class="text" style="margin-left: 10px; cursor: pointer;"
+                @click="$router.push('/Detail')">{{ item.project_title }}</span>
+            </div>
+          </template>
 
-                    <!-- 页脚 -->
-                    <template #footer>
+          <!-- 页脚 -->
+          <template #footer>
 
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <el-pagination 
-                                background 
-                                layout="prev, pager, next" 
-                                :total="totalItems"
-                                :current-page.sync="currentPage"
-                                :page-size="pageSize"
-                                @current-change="handleCurrentChange"
-                                 />
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <el-pagination background layout="prev, pager, next" :total="totalItems" :current-page.sync="currentPage"
+                :page-size="pageSize" @current-change="handleCurrentChange" />
 
-                            <el-button-group class="btn-group">
-                                <el-button type="primary" size="mini" plain>全部</el-button>
-                                <el-button type="success" size="mini" plain>已闭环</el-button>
-                                <el-button type="warning" size="mini" plain>未闭环</el-button>
-                            </el-button-group>
+              <el-button-group class="btn-group">
+                <el-button type="primary" size="mini" plain>全部</el-button>
+                <el-button type="success" size="mini" plain>已闭环</el-button>
+                <el-button type="warning" size="mini" plain>未闭环</el-button>
+              </el-button-group>
 
-                        </div>
-                    </template>
-                </el-card>
-            </el-main>
-        </el-container>
-    </div>
+            </div>
+          </template>
+        </el-card>
+      </el-main>
+    </el-container>
+  </div>
 </template>
   
 
@@ -82,6 +76,7 @@ export default {
     await this.fetchProjects();
   },
   methods: {
+    // -------------------------- 以下为分页相关方法 --------------------------
     async fetchProjects() {
       const db = await Database.load("sqlite:NothingIdeas.db");
 
@@ -101,14 +96,27 @@ export default {
       this.currentPage = page; // 更新当前页码
       await this.fetchProjects(); // 重新获取数据
     },
+    // -------------------------- 以下为测试按钮相关方法 ----------------
     async testButton() {
       const db = await Database.load("sqlite:NothingIdeas.db");
       // 执行测试按钮操作，例如插入数据等
+      console.log("测试按钮被点击");
+
+      const time = new Date(2024,3,9); // 假设插入时间为 2024-04-09
+      // 插入一条数据
+      await db.execute("INSERT INTO test (name, age,time) VALUES (?,?,?)", ["Alice", 25, time]);
       await db.close();
+      console.log("数据插入成功");
     },
+    // ---------- 以下为路由相关方法 ----------------
     goToDetail(item) {
       this.$router.push(`/Detail?id=${item.id}`); // 跳转到详情页面，传递项目 ID
-    }
+    },
+    // ---------- 以下为时间计算方法daysSinceCreation(date) ----------------
+    daysSinceCreation(date) {
+      const days = Math.floor((new Date() - date) / (1000 * 60 * 60 * 24));
+      return days;
   }
+}
 };
 </script>
