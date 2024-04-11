@@ -72,17 +72,11 @@
 
           <div style="display: flex;align-items: center;margin-bottom: 20px;">
             <span style="width: 100px">节点类型：</span>
-            <el-select v-model="type_value" placeholder="Select" style="width: 240px;left: 0px;">
+            <el-select v-model="type_value" placeholder="Select" style="width: 240px;left: -12px;">
               <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </div>
-
-          <div style="display: flex;align-items: center;margin-bottom: 20px;">
-            <span style="width: 100px;margin-bottom: 10px;">节点标题：</span>
-            <el-input v-model="Nodetextarea" style="width: 100%;margin-top: 10px;" autosize type="textarea"
-              placeholder="Please input" />
-          </div>
-
+          <QuillEditor theme="snow" />
 
         </el-form>
         <template #footer>
@@ -103,8 +97,13 @@
 import Database from "tauri-plugin-sql-api";
 import { Back, Edit, Search, Share, Upload } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 export default {
+  components: {
+    QuillEditor,
+  },
   data() {
     return {
       project_id: null,
@@ -138,6 +137,7 @@ export default {
       await db.close();
       this.fetchPreojectNodes();
       this.dialogFormVisible = false;
+      // 清空表单数据
       this.form.name = ''
       this.Nodetextarea = ''
       this.type_value = ''
