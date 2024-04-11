@@ -115,7 +115,7 @@ export default {
 
       // 查询当前页数据
       const offset = (this.currentPage - 1) * this.pageSize;
-      const query = `SELECT * FROM nothing_project LIMIT ${this.pageSize} OFFSET ${offset}`;
+      const query = `SELECT * FROM nothing_project order by project_create_time desc LIMIT ${this.pageSize} OFFSET ${offset}`;
       const NothingProject = await db.select(query);
 
       this.NothingProject = NothingProject; // 更新数据列表
