@@ -38,7 +38,8 @@
                         <el-col :span="16">
                           <div class="grid-content bg-purple">
                             <h3 style="margin-top: 0px;">{{ item.node_title }}</h3>
-                            <p>{{ item.node_text }}</p>
+                            <!-- <p>{{ item.node_text }}</p> -->
+                            <div v-html="item.node_text"></div>
                           </div>
                         </el-col>
                         <el-col :span="8">
@@ -72,11 +73,12 @@
 
           <div style="display: flex;align-items: center;margin-bottom: 20px;">
             <span style="width: 100px">节点类型：</span>
-            <el-select v-model="type_value" placeholder="Select" style="width: 240px;left: -12px;">
+            <el-select v-model="type_value" placeholder="Select" style="width: 240px;">
               <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </div>
-          <QuillEditor theme="snow" />
+          <!-- <QuillEditor theme="snow" /> -->
+          <quill-editor ref="editor" v-model="editorContent" :options="editorOption" @text-change="handleTextChange"></quill-editor>
 
         </el-form>
         <template #footer>
@@ -102,12 +104,31 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 export default {
   components: {
-    QuillEditor,
+    QuillEditor
   },
   data() {
     return {
+      type_value: '',//节点类型,如果没声明那么显示不了
+      editorContent: '',
+      options: [],
       project_id: null,
-      NothingProjectNodes: []
+      NothingProjectNodes: [],
+      editorOption: {
+        // 富文本编辑器配置选项
+        placeholder: '请输入内容...', // 占位符
+        modules: {
+          toolbar: [
+            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            ['blockquote', 'code-block'],
+            [{ 'align': [] }], // 对齐方式
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            [{ 'indent': '-1'}, { 'indent': '+1' }],
+            ['link', 'image'],
+            ['clean']
+          ]
+        }
+      }
     }
   },
   async created() {
@@ -131,7 +152,7 @@ export default {
     async addNode() {
       const db = await Database.load("sqlite:NothingIdeas.db")
       const query = `INSERT INTO nothing_project_node (project_id, node_title, node_text, node_type,node_create_time) VALUES (?, ?, ?, ?,?)`
-      const params = [this.project_id, this.form.name, this.Nodetextarea, this.type_value, new Date().toLocaleString()]
+      const params = [this.project_id, this.form.name, this.$refs.editor.getHTML(), this.type_value, new Date().toLocaleString()]
       const result = await db.execute(query, params);
       console.log(result)
       await db.close();
@@ -139,9 +160,17 @@ export default {
       this.dialogFormVisible = false;
       // 清空表单数据
       this.form.name = ''
-      this.Nodetextarea = ''
+      this.editorContent = ''
       this.type_value = ''
-    }
+      const content = this.editorContent;
+      const content2 = this.$refs.editor.getHTML();
+      console.log(content)
+      console.log(content2)
+
+    },
+    handleTextChange(newContent, oldContent, source) {
+      this.editorContent = newContent;
+    },
   },
   setup() {
 
