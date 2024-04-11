@@ -10,7 +10,7 @@
           <!-- 页头 -->
           <template #header>
             <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-              <span class="header-title">nothingIdeas想法流程</span>
+              <h1 class="header-title" style="margin: 10px;font-family: cursive; text-shadow: 0 0 black;">NothingIdeas想法流程</h1>
               <el-button-group class="btn-group">
                 <el-button type="primary" size="mini">新增</el-button>
                 <el-button type="danger" size="mini">删除</el-button>

@@ -20,9 +20,10 @@
     "windows": [
       {
         "title": "想法创建流程",
-        "width": 1000,
+        "width": 1100,
         "height": 800,
-        "center": true
+        "center": true,
+        "resizable": false
       }
     ],
     "security": {
