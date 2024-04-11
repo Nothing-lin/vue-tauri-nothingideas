@@ -29,7 +29,7 @@
                   Date(item.project_create_time)) }}天</el-button>
                 <el-button plain :type="item.project_status === '未闭环' ? 'warning' : 'success'" size="mini">{{
                   item.project_status }}</el-button>
-                <span class="text" style="margin-left: 10px; cursor: pointer;" @click="$router.push('/Detail')">{{
+                <span class="text" style="margin-left: 10px; cursor: pointer;" @click="$router.push('/Detail/' + item.project_id)">{{
                   item.project_title }}</span>
               </div>
               <el-button type="danger" link v-if="IsDeleted" @click="deleteProjectconfirm(item.project_id)">X</el-button>

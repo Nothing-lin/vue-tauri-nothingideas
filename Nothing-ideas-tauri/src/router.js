@@ -12,7 +12,7 @@ const router  = createRouter({
             component:Nindex
         },
         {
-            path:"/Detail",
+            path:"/Detail/:project_id",
             component:Detail
         },
         {

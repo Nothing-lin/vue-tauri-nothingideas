@@ -14,6 +14,7 @@
             @click="dialogFormVisible = true">新增节点</el-button>
           <el-button type="success" size="mini" plain style="box-shadow: none;">流程闭环</el-button>
           <el-button type="warning" size="mini" plain style="box-shadow: none;">恢复流程</el-button>
+          <el-button size="mini" plain style="box-shadow: none;">测试按钮{{ project_id }}</el-button>
         </el-button-group>
       </el-header>
       <!-- Main -->
@@ -140,47 +141,45 @@
 </template>
 
 
-<script setup lang="ts">
+<script>
 import { Back, Edit, Search, Share, Upload } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
 
-const dialogTableVisible = ref(false)
-const dialogFormVisible = ref(false)
-const formLabelWidth = '140px'
+export default {
+  data() {
+    return {
+      project_id:null
+    }
+  },
+    mounted() {
+      this.project_id = this.$route.params.project_id//获取路由参数
+      console.log(this.project_id)
+    },
+  setup() {
 
-const form = reactive({
-  name: '',
-  region: '',
-  date1: '',
-  date2: '',
-  delivery: false,
-  type: [],
-  resource: '',
-  desc: '',
-})
+  // 新增按钮-对话框
+    const dialogFormVisible = ref(false)
+    const formLabelWidth = '140px'
 
-const gridData = [
-  {
-    date: '2016-05-02',
-    name: 'John Smith',
-    address: 'No.1518,  Jinshajiang Road, Putuo District',
-  },
-  {
-    date: '2016-05-04',
-    name: 'John Smith',
-    address: 'No.1518,  Jinshajiang Road, Putuo District',
-  },
-  {
-    date: '2016-05-01',
-    name: 'John Smith',
-    address: 'No.1518,  Jinshajiang Road, Putuo District',
-  },
-  {
-    date: '2016-05-03',
-    name: 'John Smith',
-    address: 'No.1518,  Jinshajiang Road, Putuo District',
-  },
-]
+    const form = reactive({
+      name: '',
+      region: '',
+      date1: '',
+      date2: '',
+      delivery: false,
+      type: [],
+      resource: '',
+      desc: '',
+    })
+
+    return {
+      dialogFormVisible,
+      formLabelWidth,
+      form
+    };
+  }
+}
+
 </script>
 
 
@@ -242,7 +241,8 @@ span.custom-dot {
   overflow: auto;
 }
 
-input, button {
+input,
+button {
   box-shadow: none !important;
 }
 </style>
