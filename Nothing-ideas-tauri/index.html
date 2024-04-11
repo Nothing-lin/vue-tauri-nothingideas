@@ -1,14 +1,29 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tauri + Vue 3 App</title>
-  </head>
 
-  <body style="margin: 0; padding: 0;">
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tauri + Vue 3 App</title>
+  <style>
+    /* Firefox */
+    /* Note: scrollbar styling for Firefox is experimental and may not work in all versions */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #e6e4e4 #f1f1f100;
+    }
+
+    *::-webkit-scrollbar-corner {
+      background-color: transparent;
+      /* 隐藏滚动条的边角 */
+    }
+  </style>
+</head>
+
+<body style="margin: 0; padding: 0;">
+  <div id="app"></div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+
 </html>
