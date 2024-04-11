@@ -38,9 +38,9 @@
                 :page-size="pageSize" @current-change="handleCurrentChange" />
 
               <el-button-group class="btn-group">
-                <el-button type="primary" size="mini" plain>全部</el-button>
-                <el-button type="success" size="mini" plain>已闭环</el-button>
-                <el-button type="warning" size="mini" plain>未闭环</el-button>
+                <el-button type="primary" size="mini" plain @click="allButton">全部</el-button>
+                <el-button type="success" size="mini" plain @click="closedButton">已闭环</el-button>
+                <el-button type="warning" size="mini" plain @click="unclosedButton">未闭环</el-button>
               </el-button-group>
 
             </div>
@@ -116,7 +116,28 @@ export default {
     daysSinceCreation(date) {
       const days = Math.floor((new Date() - date) / (1000 * 60 * 60 * 24));
       return days;
+  },
+  // ---------- 以下为【全部按钮】的功能 ----------------
+    allButton() {
+      this.currentPage = 1; // 回到第一页
+      this.fetchProjects(); // 重新获取数据
+},
+  // ---------- 以下为【已闭环按钮】的功能 ----------------
+    async closedButton() {
+      const db = await Database.load("sqlite:NothingIdeas.db");
+      const query = `SELECT * FROM nothing_project where project_status = '已闭环'`;
+      const NothingProject = await db.select(query);
+      this.NothingProject = NothingProject; // 更新数据列表
+      await db.close();
+},
+  // ---------- 以下为【未闭环按钮】的功能 ----------------
+  async unclosedButton() {
+    const db = await Database.load("sqlite:NothingIdeas.db");
+    const query = `SELECT * FROM nothing_project where project_status = '未闭环'`;
+    const NothingProject = await db.select(query);
+    this.NothingProject = NothingProject; // 更新数据列表
+    await db.close();
+
   }
-}
-};
+}};
 </script>
