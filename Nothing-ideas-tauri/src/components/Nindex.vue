@@ -13,7 +13,7 @@
               <h1 class="header-title" style="margin: 10px;font-family: cursive; text-shadow: 0 0 black;">NothingIdeas想法流程</h1>
               <el-button-group class="btn-group">
                 <el-button type="primary" size="mini">新增</el-button>
-                <el-button type="danger" size="mini">删除</el-button>
+                <el-button type="danger" size="mini" @click="showDeleteButton">删除</el-button>
                 <el-button size="mini" @click="testButton">测试按钮</el-button>
               </el-button-group>
             </div>
@@ -21,13 +21,16 @@
 
           <!-- 内容  -->
           <template v-for="item in NothingProject">
-            <div class="item" style="margin-top: 15px; margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; margin-bottom: 15px;">
+            <div class="item" style=" align-items: center;">
               <el-button plain size="mini" style="width: 60px;">{{daysSinceCreation(new Date(item.project_create_time))}}天</el-button>
               <el-button plain :type="item.project_status === '未闭环' ? 'danger' : 'success'"
                 size="mini">{{ item.project_status }}</el-button>
               <span class="text" style="margin-left: 10px; cursor: pointer;"
                 @click="$router.push('/Detail')">{{ item.project_title }}</span>
             </div>
+            <el-button type="danger" link v-if="IsDeleted" @click="deleteProjectconfirm(item.project_id)">X</el-button>
+          </div>
           </template>
 
           <!-- 页脚 -->
@@ -54,6 +57,7 @@
 
 <script>
 import Database from "tauri-plugin-sql-api";
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 export default {
   data() {
@@ -61,7 +65,8 @@ export default {
       NothingProject: [],    // 数据列表
       totalItems: 0,         // 总数据条数
       currentPage: 1,        // 当前页码
-      pageSize: 10           // 每页显示条数
+      pageSize: 10,           // 每页显示条数
+      IsDeleted: false,      // 是否删除
     };
   },
   computed: {
@@ -138,6 +143,48 @@ export default {
     this.NothingProject = NothingProject; // 更新数据列表
     await db.close();
 
-  }
+  },
+  // ---------- 以下为是否显示删除按钮的功能 ----------------
+  showDeleteButton() {
+    this.IsDeleted = !this.IsDeleted;// 切换删除按钮显示状态
+  },
+  //以下为是否确认删除弹出窗口messageBox的功能
+  async deleteProjectconfirm(projectId){
+  ElMessageBox.confirm(
+    '是否确定删除这条数据?',
+    '删除操作',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+      beforeClose: async (action, instance, done) => {
+        if (action === 'confirm') {
+          const db = await Database.load("sqlite:NothingIdeas.db");
+          const query = `DELETE FROM nothing_project WHERE project_id = ${projectId}`;
+          await db.execute(query);
+          await db.close();
+          this.fetchProjects(); // 重新获取数据
+          done();
+
+        } else if (action === 'cancel') {
+          done();
+        }
+      }
+
+    }
+  )
+    .then(() => {
+      ElMessage({
+        type: 'success',
+        message: '删除成功',
+      })
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '已取消',
+      })
+    })
+}
 }};
 </script>
