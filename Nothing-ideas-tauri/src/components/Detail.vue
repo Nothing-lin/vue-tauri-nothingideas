@@ -14,7 +14,8 @@
             @click="dialogFormVisible = true">新增节点</el-button>
           <el-button type="success" size="mini" plain style="box-shadow: none;">流程闭环</el-button>
           <el-button type="warning" size="mini" plain style="box-shadow: none;">恢复流程</el-button>
-          <el-button size="mini" plain style="box-shadow: none;">测试按钮{{ project_id }}</el-button>
+          <el-button size="mini" plain style="box-shadow: none;" @click="fetchPreojectNodes()">测试按钮{{ project_id
+          }}</el-button>
         </el-button-group>
       </el-header>
       <!-- Main -->
@@ -25,72 +26,19 @@
               <!-- 时间轴 -->
               <div class="block">
                 <el-timeline>
-
-                  <el-timeline-item timestamp="2018年4月12日" placement="top">
+                  <!-- node节点列表 -->
+                  <el-timeline-item timestamp="2018年4月12日" placement="top" v-for="item in NothingProjectNodes">
                     <template v-slot:dot>
                       <!-- 使用 dot 插槽自定义小圆点 -->
-                      <span class="custom-dot">主题</span>
+                      <span class="custom-dot" :style="{ backgroundColor: item.node_type === '拓展' ? 'red' : 'none' }">{{
+                        item.node_type }}</span>
                     </template>
                     <el-card class="custom-card">
                       <el-row :gutter="20">
                         <el-col :span="16">
                           <div class="grid-content bg-purple">
-                            <h4>学习如何搭建第一个vue开发框架</h4>
-                            <p>王小虎 提交于 2018/4/12 20:46</p>
-                          </div>
-                        </el-col>
-                        <el-col :span="8">
-                          <div class="grid-content bg-purple">
-                            <h4>参考网站</h4>
-                            <ul>
-                              <li><el-link type="success">参考链接1</el-link></li>
-                              <li><el-link type="success">参考链接2</el-link></li>
-                              <li><el-link type="success">参考链接3</el-link></li>
-                            </ul>
-                          </div>
-                        </el-col>
-                      </el-row>
-                    </el-card>
-                  </el-timeline-item>
-
-                  <el-timeline-item timestamp="2018年4月12日" placement="top">
-                    <template v-slot:dot>
-                      <!-- 使用 dot 插槽自定义小圆点 -->
-                      <span class="custom-dot" style="background-color: rgb(255, 107, 53);">拓展</span>
-                    </template>
-                    <el-card class="custom-card">
-                      <el-row :gutter="20">
-                        <el-col :span="16">
-                          <div class="grid-content bg-purple">
-                            <h4>学习如何搭建第一个vue开发框架</h4>
-                            <p>王小虎 提交于 2018/4/12 20:46</p>
-                          </div>
-                        </el-col>
-                        <el-col :span="8">
-                          <div class="grid-content bg-purple">
-                            <h4>参考网站</h4>
-                            <ul>
-                              <li><el-link type="success">参考链接1</el-link></li>
-                              <li><el-link type="success">参考链接2</el-link></li>
-                              <li><el-link type="success">参考链接3</el-link></li>
-                            </ul>
-                          </div>
-                        </el-col>
-                      </el-row>
-                    </el-card>
-                  </el-timeline-item>
-
-                  <el-timeline-item timestamp="2018年4月12日" placement="top">
-                    <template v-slot:dot>
-                      <!-- 使用 dot 插槽自定义小圆点 -->
-                      <span class="custom-dot">主题</span>
-                    </template>
-                    <el-card class="custom-card">
-                      <el-row :gutter="20">
-                        <el-col :span="16">
-                          <div class="grid-content bg-purple">
-                            <h4>学习如何搭建第一个vue开发框架</h4>
-                            <p>王小虎 提交于 2018/4/12 20:46</p>
+                            <h3 style="margin-top: 0px;">{{ item.node_title }}</h3>
+                            <p>{{ item.node_text }}</p>
                           </div>
                         </el-col>
                         <el-col :span="8">
@@ -115,23 +63,33 @@
       </el-main>
 
       <!-- 新增-对话框 -->
-      <el-dialog v-model="dialogFormVisible" title="新增节点" width="500">
+      <el-dialog v-model="dialogFormVisible" title="新增节点" width="800">
         <el-form :model="form">
-          <el-form-item label="节点名称" :label-width="formLabelWidth">
+          <div style="display: flex;align-items: center;margin-bottom: 20px;">
+            <span style="width: 100px">节点标题：</span>
             <el-input v-model="form.name" autocomplete="off" />
-          </el-form-item>
-          <el-form-item label="Zones" :label-width="formLabelWidth">
-            <el-select v-model="form.region" placeholder="Please select a zone">
-              <el-option label="Zone No.1" value="shanghai" />
-              <el-option label="Zone No.2" value="beijing" />
+          </div>
+
+          <div style="display: flex;align-items: center;margin-bottom: 20px;">
+            <span style="width: 100px">节点类型：</span>
+            <el-select v-model="type_value" placeholder="Select" style="width: 240px;left: 0px;">
+              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
-          </el-form-item>
+          </div>
+
+          <div style="display: flex;align-items: center;margin-bottom: 20px;">
+            <span style="width: 100px;margin-bottom: 10px;">节点标题：</span>
+            <el-input v-model="Nodetextarea" style="width: 100%;margin-top: 10px;" autosize type="textarea"
+              placeholder="Please input" />
+          </div>
+
+
         </el-form>
         <template #footer>
           <div class="dialog-footer">
-            <el-button @click="dialogFormVisible = false">Cancel</el-button>
-            <el-button type="primary" @click="dialogFormVisible = false">
-              Confirm
+            <el-button @click="dialogFormVisible = false">取消</el-button>
+            <el-button type="primary" @click="addNode()">
+              新增
             </el-button>
           </div>
         </template>
@@ -142,24 +100,56 @@
 
 
 <script>
+import Database from "tauri-plugin-sql-api";
 import { Back, Edit, Search, Share, Upload } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
 
 export default {
   data() {
     return {
-      project_id:null
+      project_id: null,
+      NothingProjectNodes: []
     }
   },
-    mounted() {
-      this.project_id = this.$route.params.project_id//获取路由参数
-      console.log(this.project_id)
+  async created() {
+    this.fetchPreojectNodes();
+  },
+  mounted() {
+    this.project_id = this.$route.params.project_id//获取路由参数
+    console.log(this.project_id)
+  },
+  methods: {
+    async fetchPreojectNodes() {
+      //加载数据库数据
+      const db = await Database.load("sqlite:NothingIdeas.db")
+      const query = `SELECT * FROM nothing_project_node WHERE project_id = ${this.project_id}`
+      const NothingProjectNodes = await db.select(query);
+      this.NothingProjectNodes = NothingProjectNodes;
+      await db.close();
+      console.log(this.NothingProjectNodes)
     },
+    // 新增按钮插入数据
+    async addNode() {
+      const db = await Database.load("sqlite:NothingIdeas.db")
+      const query = `INSERT INTO nothing_project_node (project_id, node_title, node_text, node_type,node_create_time) VALUES (?, ?, ?, ?,?)`
+      const params = [this.project_id, this.form.name, this.Nodetextarea, this.type_value, new Date().toLocaleString()]
+      const result = await db.execute(query, params);
+      console.log(result)
+      await db.close();
+      this.fetchPreojectNodes();
+      this.dialogFormVisible = false;
+      this.form.name = ''
+      this.Nodetextarea = ''
+      this.type_value = ''
+    }
+  },
   setup() {
 
-  // 新增按钮-对话框
+    // 新增按钮-对话框
     const dialogFormVisible = ref(false)
     const formLabelWidth = '140px'
+
+    const Nodetextarea = ref('')
 
     const form = reactive({
       name: '',
@@ -171,15 +161,32 @@ export default {
       resource: '',
       desc: '',
     })
+    const value = ref('')
+
+    const options = [
+      {
+        value: '主题',
+        label: '主题',
+      },
+      {
+        value: '拓展',
+        label: '拓展',
+      }
+    ]
 
     return {
       dialogFormVisible,
       formLabelWidth,
-      form
+      form,
+      Nodetextarea,
+      options,
+      value
     };
-  }
-}
 
+
+  }
+
+}
 </script>
 
 
