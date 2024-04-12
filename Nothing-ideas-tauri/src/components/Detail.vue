@@ -6,14 +6,16 @@
         style="background-color: #a0cfff;padding: 0%;display: flex;justify-content: space-between; align-items: center;padding: 20px;">
         <div style="display: flex;align-items: center;">
           <el-button :icon="Back" style="box-shadow: none;" @click="$router.push('/')">返回</el-button>
-          <h1 style="margin-left: 20px; color: #337ecc;font-size: 1em;">{{this.projectname}}</h1>
+          <h1 style="margin-left: 20px; color: #337ecc;font-size: 1em;">{{ this.projectname }}</h1>
         </div>
 
         <el-button-group class="btn-group">
           <el-button type="primary" size="mini" plain style="box-shadow: none;"
             @click="dialogFormVisible = true">新增节点</el-button>
-          <el-button type="success" size="mini" plain style="box-shadow: none;border-color: none;" :disabled="this.projectstaus === '已闭环'" @click="updateProjectStatus()">流程闭环</el-button>
-          <el-button type="warning" size="mini" plain style="box-shadow: none;border-color: none;" :disabled="this.projectstaus === '未闭环'" @Click="recoverProjectStatus()">恢复流程</el-button>
+          <el-button type="success" size="mini" plain style="box-shadow: none;border-color: none;"
+            :disabled="this.projectstaus === '已闭环'" @click="updateProjectStatus()">流程闭环</el-button>
+          <el-button type="warning" size="mini" plain style="box-shadow: none;border-color: none;"
+            :disabled="this.projectstaus === '未闭环'" @Click="recoverProjectStatus()">恢复流程</el-button>
           <el-button size="mini" plain style="box-shadow: none;" @click="fetchPreoject()">测试按钮{{ project_id
           }}</el-button>
         </el-button-group>
@@ -27,7 +29,8 @@
               <div class="block">
                 <el-timeline>
                   <!-- node节点列表 -->
-                  <el-timeline-item timestamp="2018年4月12日" placement="top" v-for="item in NothingProjectNodes" :key="item.node_id">
+                  <el-timeline-item timestamp="2018年4月12日" placement="top" v-for="item in NothingProjectNodes"
+                    :key="item.node_id">
                     <template v-slot:dot>
                       <!-- 使用 dot 插槽自定义小圆点 -->
                       <span class="custom-dot" :style="{ backgroundColor: item.node_type === '拓展' ? 'red' : 'none' }">{{
@@ -46,7 +49,9 @@
                           <div class="grid-content bg-purple" v-if="this.projectstaus === '未闭环'">
                             <h4>操作</h4>
                             <ul>
-                              <li><el-link type="primary" @click="getNodeData(item.node_type,item.node_title,item.node_text,item.node_id)">编辑</el-link></li>
+                              <li><el-link type="primary"
+                                  @click="getNodeData(item.node_type, item.node_title, item.node_text, item.node_id)">编辑</el-link>
+                              </li>
                               <li><el-link type="danger" @click="deleteNode(item.node_id)">删除</el-link></li>
                             </ul>
                           </div>
@@ -77,7 +82,8 @@
             </el-select>
           </div>
           <!-- <QuillEditor theme="snow" /> -->
-          <quill-editor ref="editor" v-model="editorContent" :options="editorOption" @text-change="handleTextChange"></quill-editor>
+          <quill-editor ref="editor" v-model="editorContent" :options="editorOption"
+            @text-change="handleTextChange"></quill-editor>
 
         </el-form>
         <template #footer>
@@ -106,7 +112,8 @@
             </el-select>
           </div>
           <!-- <QuillEditor theme="snow" /> -->
-          <quill-editor ref="Editeditor" v-model="editorContent2" :options="editorOption" @text-change="handleTextChange"></quill-editor>
+          <quill-editor ref="Editeditor" v-model="editorContent2" :options="editorOption"
+            @text-change="handleTextChange"></quill-editor>
 
         </el-form>
         <template #footer>
@@ -142,7 +149,7 @@ export default {
       project_id: null,
       NothingProjectNodes: [],
       NothingProject: [],
-      node_item:{'node_type':'','node_title':'','node_text':'','node_id':''},
+      node_item: { 'node_type': '', 'node_title': '', 'node_text': '', 'node_id': '' },
       projectname: '',
       projectstaus: '',
       editorOption: {
@@ -154,8 +161,8 @@ export default {
             ['bold', 'italic', 'underline', 'strike'],
             ['blockquote', 'code-block'],
             [{ 'align': [] }], // 对齐方式
-            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            [{ 'indent': '-1'}, { 'indent': '+1' }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            [{ 'indent': '-1' }, { 'indent': '+1' }],
             ['link', 'image'],
             ['clean']
           ]
@@ -164,16 +171,16 @@ export default {
     }
   },
   async created() {
-   await this.fetchPreojectNodes();
-   this.NothingProject = await this.fetchPreoject();
-   this.projectname = this.NothingProject[0].project_title;
-   this.projectstaus = this.NothingProject[0].project_status;
-   console.log(this.projectname)
+    await this.fetchPreojectNodes();
+    this.NothingProject = await this.fetchPreoject();
+    this.projectname = this.NothingProject[0].project_title;
+    this.projectstaus = this.NothingProject[0].project_status;
+    console.log(this.projectname)
   },
   async mounted() {
     this.project_id = this.$route.params.project_id//获取路由参数
-    
-  
+
+
   },
   methods: {
     // 加载数据库数据
@@ -261,14 +268,14 @@ export default {
       this.$refs.Editeditor.setHTML('')
     },
     // 获取节点数据
-    getNodeData(nodeType,nodeTitle,nodeText,nodeid) {
+    getNodeData(nodeType, nodeTitle, nodeText, nodeid) {
       this.node_item.node_type = nodeType;
       this.node_item.node_title = nodeTitle;
       this.node_item.node_text = nodeText;
       this.node_item.node_id = nodeid;
       console.log(this.node_item)
       this.dialogFormEditVisible = true;
-      
+
       this.formEdit.name = nodeTitle;
       this.typeEdit_value = nodeType;
       this.$refs.Editeditor.setHTML(nodeText);
@@ -290,7 +297,7 @@ export default {
       this.editorContent2 = ''
       this.typeEdit_value = ''
       this.$refs.Editeditor.setHTML('')
-      this.node_item={};
+      this.node_item = {};
     }
   },
   setup() {
@@ -415,5 +422,4 @@ span.custom-dot {
 input,
 button {
   box-shadow: none !important;
-}
-</style>
+}</style>
