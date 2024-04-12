@@ -2,7 +2,7 @@
 <template>
   <div class="common-layout">
     <el-container>
-      <el-header>Header</el-header>
+      <!-- <el-header>Header</el-header> -->
 
 
       <el-main>
@@ -15,7 +15,7 @@
               <el-button-group class="btn-group">
                 <el-button type="primary" size="mini" @click="dialogFormVisible = true">新增</el-button>
                 <el-button type="danger" size="mini" @click="showDeleteButton">删除</el-button>
-                <el-button size="mini" @click="testButton">测试按钮</el-button>
+                <!-- <el-button size="mini" @click="testButton">测试按钮</el-button> -->
               </el-button-group>
             </div>
           </template>
@@ -103,6 +103,11 @@ export default {
   },
   async created() {
     await this.fetchProjects();
+    //监听数据加载完成事件，然后更新界面
+    this.$onces('data-loaded', () => {
+      this.$forceUpdate();// 强制刷新界面
+    });
+    
   },
   methods: {
     // -------------------------- 以下为分页相关方法 --------------------------
@@ -120,6 +125,8 @@ export default {
 
       this.NothingProject = NothingProject; // 更新数据列表
       await db.close();
+      // 数据加载完成后触发刷新事件
+      this.$emit('data-loaded');
     },
     async handleCurrentChange(page) {
       this.currentPage = page; // 更新当前页码
