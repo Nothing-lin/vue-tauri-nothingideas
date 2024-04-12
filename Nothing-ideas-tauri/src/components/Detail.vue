@@ -268,7 +268,7 @@ export default {
       this.$refs.Editeditor.setHTML('')
     },
     // 获取节点数据
-    getNodeData(nodeType, nodeTitle, nodeText, nodeid) {
+    async getNodeData(nodeType, nodeTitle, nodeText, nodeid) {
       this.node_item.node_type = nodeType;
       this.node_item.node_title = nodeTitle;
       this.node_item.node_text = nodeText;
@@ -278,6 +278,10 @@ export default {
 
       this.formEdit.name = nodeTitle;
       this.typeEdit_value = nodeType;
+      console.log("测试testnode:"+nodeText)
+
+      await this.$nextTick();
+
       this.$refs.Editeditor.setHTML(nodeText);
 
     },
@@ -416,9 +420,10 @@ span.custom-dot {
   height: 100vh;
   margin: -10px;
   padding: 0;
-  overflow: auto;
 }
-
+.el-main {
+  overflow: unset !important;
+}
 input,
 button {
   box-shadow: none !important;
