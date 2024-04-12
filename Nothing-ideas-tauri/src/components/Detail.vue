@@ -16,8 +16,7 @@
             :disabled="this.projectstaus === '已闭环'" @click="updateProjectStatus()">流程闭环</el-button>
           <el-button type="warning" size="mini" plain style="box-shadow: none;border-color: none;"
             :disabled="this.projectstaus === '未闭环'" @Click="recoverProjectStatus()">恢复流程</el-button>
-          <el-button size="mini" plain style="box-shadow: none;" @click="fetchPreoject()">测试按钮{{ project_id
-          }}</el-button>
+          <!-- <el-button size="mini" plain style="box-shadow: none;" @click="fetchPreoject()">测试按钮{{ project_id}}</el-button> -->
         </el-button-group>
       </el-header>
       <!-- Main -->
@@ -127,6 +126,8 @@
       </el-dialog>
     </el-container>
   </div>
+<!-- 回到顶部 -->
+  <el-backtop :right="5" :bottom="100" />
 </template>
 
 
@@ -144,6 +145,7 @@ export default {
   data() {
     return {
       type_value: '',//节点类型,如果没声明那么显示不了
+      typeEdit_value: '',//编辑节点类型
       editorContent: '',
       options: [],
       project_id: null,
@@ -196,7 +198,7 @@ export default {
     async fetchPreojectNodes() {
       //加载数据库数据
       const db = await Database.load("sqlite:NothingIdeas.db")
-      const query = `SELECT * FROM nothing_project_node WHERE project_id = ${this.project_id}`
+      const query = `SELECT * FROM nothing_project_node WHERE project_id = ${this.project_id} order by node_create_time desc`
       const NothingProjectNodes = await db.select(query);
       this.NothingProjectNodes = NothingProjectNodes;
       await db.close();
@@ -457,12 +459,16 @@ pre.ql-syntax {
     white-space: pre-wrap;
     /* word-wrap: break-word; */
     /* overflow-wrap: break-word; */
-    background-color: #42a4ff;
-    color: aliceblue;
+    background-color: #a0cfff;
+    color: white;
     font-size: 14px;
     border-radius: 10px;
     padding: 10px;
     margin: 10px 10px;
     width: 95%;
+}
+img {
+    max-width: 100%;
+    border-radius: 5px;
 }
 </style>
