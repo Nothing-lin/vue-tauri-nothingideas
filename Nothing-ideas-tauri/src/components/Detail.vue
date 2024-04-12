@@ -6,7 +6,7 @@
         style="background-color: #a0cfff;padding: 0%;display: flex;justify-content: space-between; align-items: center;padding: 20px;">
         <div style="display: flex;align-items: center;">
           <el-button :icon="Back" style="box-shadow: none;" @click="$router.push('/')">返回</el-button>
-          <h1 style="margin-left: 20px; color: #337ecc;font-size: 1em;">如何通过tauri开发出一款自定义的个人app</h1>
+          <h1 style="margin-left: 20px; color: #337ecc;font-size: 1em;">{{this.projectname}}</h1>
         </div>
 
         <el-button-group class="btn-group">
@@ -14,7 +14,7 @@
             @click="dialogFormVisible = true">新增节点</el-button>
           <el-button type="success" size="mini" plain style="box-shadow: none;">流程闭环</el-button>
           <el-button type="warning" size="mini" plain style="box-shadow: none;">恢复流程</el-button>
-          <el-button size="mini" plain style="box-shadow: none;" @click="fetchPreojectNodes()">测试按钮{{ project_id
+          <el-button size="mini" plain style="box-shadow: none;" @click="fetchPreoject()">测试按钮{{ project_id
           }}</el-button>
         </el-button-group>
       </el-header>
@@ -113,6 +113,8 @@ export default {
       options: [],
       project_id: null,
       NothingProjectNodes: [],
+      NothingProject: [],
+      projectname: '',
       editorOption: {
         // 富文本编辑器配置选项
         placeholder: '请输入内容...', // 占位符
@@ -132,13 +134,27 @@ export default {
     }
   },
   async created() {
-    this.fetchPreojectNodes();
+   await this.fetchPreojectNodes();
+   this.NothingProject = await this.fetchPreoject();
+   this.projectname = this.NothingProject[0].project_title;
+   console.log(this.projectname)
   },
-  mounted() {
+  async mounted() {
     this.project_id = this.$route.params.project_id//获取路由参数
-    console.log(this.project_id)
+    
+  
   },
   methods: {
+    // 加载数据库数据
+    async fetchPreoject() {
+      this.project_id = this.$route.params.project_id//获取路由参数
+      console.log("我是标题")
+      const db = await Database.load("sqlite:NothingIdeas.db")
+      const query = `SELECT * FROM nothing_project WHERE project_id = ${this.project_id}`
+      const project = await db.select(query);
+      await db.close();
+      return project;
+    },
     async fetchPreojectNodes() {
       //加载数据库数据
       const db = await Database.load("sqlite:NothingIdeas.db")
