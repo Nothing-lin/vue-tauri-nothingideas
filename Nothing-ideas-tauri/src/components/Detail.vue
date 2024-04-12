@@ -29,7 +29,7 @@
               <div class="block">
                 <el-timeline>
                   <!-- node节点列表 -->
-                  <el-timeline-item timestamp="2018年4月12日" placement="top" v-for="item in NothingProjectNodes"
+                  <el-timeline-item :timestamp="formatDate(new Date(item.node_create_time))" placement="top" v-for="item in NothingProjectNodes"
                     :key="item.node_id">
                     <template v-slot:dot>
                       <!-- 使用 dot 插槽自定义小圆点 -->
@@ -40,7 +40,7 @@
                       <el-row :gutter="23">
                         <el-col :span="19">
                           <div class="grid-content bg-purple">
-                            <h3 style="margin-top: 0px;">{{ item.node_title }}</h3>
+                            <h3 style="margin-top: 0px;border-color: #f6f6f657;border-width: 1px;border-bottom-style: outset;padding-bottom: 10px;color: #42a4ff;">{{ item.node_title }}</h3>
                             <!-- <p>{{ item.node_text }}</p> -->
                             <div v-html="item.node_text"></div>
                           </div>
@@ -302,6 +302,13 @@ export default {
       this.typeEdit_value = ''
       this.$refs.Editeditor.setHTML('')
       this.node_item = {};
+    },
+    // 将date转为”年-月-日“格式
+    formatDate(date) {
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
+      return `${year}年${month}月${day}日`;
     }
   },
   setup() {
@@ -427,4 +434,35 @@ span.custom-dot {
 input,
 button {
   box-shadow: none !important;
-}</style>
+}
+
+h2 {
+    font-size: 16px;
+}
+
+/* blockquote样式 */
+blockquote {
+    border-top-color: #42a4ff;
+    border-top-width: 2px;
+    border-top-style: dashed;
+    border-bottom-style: dashed;
+    border-bottom-color: #42a4ff;
+    border-bottom-width: 2px;
+    margin: 15px 12px;
+    padding: 10px;
+    color: #42a4ff;
+}
+pre.ql-syntax {
+    width: 100%;
+    white-space: pre-wrap;
+    /* word-wrap: break-word; */
+    /* overflow-wrap: break-word; */
+    background-color: #42a4ff;
+    color: aliceblue;
+    font-size: 14px;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px 10px;
+    width: 95%;
+}
+</style>
