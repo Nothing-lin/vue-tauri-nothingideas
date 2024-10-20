@@ -12,6 +12,8 @@
           <el-button type="primary" plain @click="dialogFormVisible = true">新增节点</el-button>
           <el-button type="success" plain :disabled="this.projectstaus === '已闭环'" @click="updateProjectStatus()">流程闭环</el-button>
           <el-button type="warning" plain :disabled="this.projectstaus === '未闭环'" @Click="recoverProjectStatus()">恢复流程</el-button>
+          <!-- 新增打印按钮 -->
+          <el-button type="info" plain @click="printToPDF">打印为PDF</el-button>
         </el-button-group>
       </el-header>
       <!-- Main -->
@@ -27,14 +29,15 @@
                     :key="item.node_id">
                     <template v-slot:dot>
                       <!-- 使用 dot 插槽自定义小圆点 -->
-                      <span class="custom-dot" :style="{ backgroundColor: item.node_type === '拓展' ? 'red' : 'none' }">{{
-                        item.node_type }}</span>
+                      <span class="custom-dot" :style="{ backgroundColor: item.node_type === '拓展' ? 'red' : 'none' }">{{item.node_type }}</span>
                     </template>
                     <el-card class="custom-card">
                       <el-row :gutter="23">
                         <el-col :span="19">
                           <div class="grid-content bg-purple">
-                            <h3 class="node-title">{{ item.node_title }}</h3>
+                            <h3 class="node-title">
+                              {{ item.node_title }} 
+                            </h3>
                             <div class="markdown-content" v-html="item.node_text"></div>
                           </div>
                         </el-col>
@@ -91,7 +94,7 @@
 
 
       <!-- 编辑-对话框 -->
-      <el-dialog v-model="dialogFormEditVisible" title="编辑节点" width="800">
+      <el-dialog v-model="dialogFormEditVisible" title="辑节点" width="800">
         <el-form :model="formEdit">
           <div style="display: flex;align-items: center;margin-bottom: 20px;">
             <span style="width: 100px">节点标题：</span>
@@ -178,7 +181,7 @@ export default {
     console.log(this.projectname)
   },
   async mounted() {
-    this.project_id = this.$route.params.project_id//获取路由参数
+    this.project_id = this.$route.params.project_id//获路由参数
 
 
   },
@@ -309,7 +312,111 @@ export default {
       const month = (date.getMonth() + 1).toString().padStart(2, '0');
       const day = date.getDate().toString().padStart(2, '0');
       return `${year}年${month}月${day}日`;
-    }
+    },
+    // 打印为PDF
+    printToPDF() {
+      const printWindow = window.open('', '_blank');
+      
+      const nodeElements = document.querySelectorAll('.custom-card');
+      let content = '';
+      nodeElements.forEach((element, index) => {
+        const titleElement = element.querySelector('.node-title');
+        const typeElement = element.closest('.el-timeline-item').querySelector('.custom-dot');
+        const timeElement = element.closest('.el-timeline-item').querySelector('.el-timeline-item__timestamp');
+        const contentElement = element.querySelector('.markdown-content');
+        
+        if (titleElement && contentElement) {
+          const title = titleElement.textContent.trim();
+          const type = typeElement ? typeElement.textContent.trim() : '';
+          const time = timeElement ? timeElement.textContent.trim() : '';
+          
+          const typeColor = type === '拓展' ? '#ff9800' : '#2196f3';
+          
+          // 添加页面分隔符，除了第一个节点
+          if (index > 0) {
+            content += '<div class="page-break"></div>';
+          }
+          
+          content += `
+            <div class="node">
+              <div class="node-header">
+                <span class="node-title">${title}</span>
+                <span class="node-type" style="color: ${typeColor};">${type}</span>
+                <span class="node-time">${time}</span>
+              </div>
+              ${contentElement.innerHTML}
+            </div>
+          `;
+        }
+      });
+      
+      const projectTitle = this.projectname;
+      
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>${projectTitle}</title>
+            <style>
+              @media print {
+                @page {
+                  margin: 1cm;
+                }
+              }
+              body { 
+                font-family: Arial, sans-serif; 
+                line-height: 1.6;
+                color: #333;
+                margin: 0;
+                padding: 0;
+              }
+              .project-title {
+                font-size: 18px;
+                font-weight: bold;
+                color: #2c3e50;
+                text-align: center;
+                padding: 10px 0;
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+              }
+              .node-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+                font-size: 14px;
+              }
+              .node-title {
+                font-weight: bold;
+                color: #2c3e50;
+              }
+              .node-type, .node-time {
+                color: #7f8c8d;
+              }
+              .page-break {
+                page-break-before: always;
+              }
+              img {
+                max-width: 100%;
+                height: auto;
+              }
+              @media print {
+                .node { page-break-inside: avoid; }
+              }
+            </style>
+          </head>
+          <body>
+            <div class="project-title">${projectTitle}</div>
+            ${content}
+          </body>
+        </html>
+      `);
+      
+      printWindow.document.close();
+      printWindow.onload = function() {
+        printWindow.print();
+        printWindow.close();
+      };
+    },
   },
   setup() {
 
@@ -786,13 +893,13 @@ img {
 /* 其他样式保持不变 */
 
 .node-title {
-  font-size: 1.4em;
+  font-size: 1.2em;
   font-weight: 600;
   color: #2c3e50;
   margin-top: 0;
   margin-bottom: 15px;
   padding-bottom: 10px;
-  border-bottom: 2px solid #ecf0f1;
+  border-bottom: 1px solid #ecf0f1;
   transition: color 0.3s ease;
 }
 
@@ -863,7 +970,43 @@ img {
 }
 
 /* ... 其他样式保持不变 ... */
+
+@media print {
+  .custom-header,
+  .el-dialog,
+  .el-backtop {
+    display: none !important;
+  }
+
+  .timeline-list-container {
+    width: 100% !important;
+  }
+
+  .el-timeline-item__node,
+  .el-timeline-item__tail {
+    display: none !important;
+  }
+
+  .el-card {
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
