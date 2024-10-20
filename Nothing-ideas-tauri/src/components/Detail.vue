@@ -34,9 +34,8 @@
                       <el-row :gutter="23">
                         <el-col :span="19">
                           <div class="grid-content bg-purple">
-                            <h3 style="margin-top: 0px;border-color: #f6f6f657;border-width: 1px;border-bottom-style: outset;padding-bottom: 10px;color: #42a4ff;">{{ item.node_title }}</h3>
-                            <!-- <p>{{ item.node_text }}</p> -->
-                            <div v-html="item.node_text"></div>
+                            <h3 class="node-title">{{ item.node_title }}</h3>
+                            <div class="markdown-content" v-html="item.node_text"></div>
                           </div>
                         </el-col>
                         <el-col :span="4">
@@ -77,7 +76,7 @@
           </div>
           <!-- <QuillEditor theme="snow" /> -->
           <quill-editor ref="editor" v-model="editorContent" :options="editorOption"
-            @text-change="handleTextChange"></quill-editor>
+            @text-change="handleTextChange" class="markdown-style-editor"></quill-editor>
 
         </el-form>
         <template #footer>
@@ -150,18 +149,22 @@ export default {
       projectname: '',
       projectstaus: '',
       editorOption: {
-        // 富文本编辑器配置选项
-        placeholder: '请输入内容...', // 占位符
+        placeholder: '请输入内容...',
         modules: {
           toolbar: [
             [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
             ['bold', 'italic', 'underline', 'strike'],
             ['blockquote', 'code-block'],
-            [{ 'align': [] }], // 对齐方式
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-            [{ 'indent': '-1' }, { 'indent': '+1' }],
-            ['link', 'image'],
-            ['clean']
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            [{ 'script': 'sub'}, { 'script': 'super' }],
+            [{ 'indent': '-1'}, { 'indent': '+1' }],
+            [{ 'direction': 'rtl' }],
+            [{ 'size': ['small', false, 'large', 'huge'] }],
+            [{ 'color': [] }, { 'background': [] }],
+            [{ 'font': [] }],
+            [{ 'align': [] }],
+            ['clean'],
+            ['link', 'image']
           ]
         }
       }
@@ -209,7 +212,7 @@ export default {
       await db.close();
       this.fetchPreojectNodes();
       this.dialogFormVisible = false;
-      // 清空表单数��
+      // 清空表单数
       this.form.name = ''
       this.editorContent = ''
       this.type_value = ''
@@ -542,9 +545,245 @@ img {
   border-color: #f5dab1;
   background-color: #fdf6ec;
 }
+
+/* 优化 Markdown 样式 */
+.markdown-content {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.8;
+  color: #333;
+  word-wrap: break-word;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #2c3e50;
+}
+
+.markdown-content h1 { font-size: 2em; border-bottom: 1px solid #eaecef; padding-bottom: 0.3em; }
+.markdown-content h2 { font-size: 1.75em; border-bottom: 1px solid #eaecef; padding-bottom: 0.3em; }
+.markdown-content h3 { font-size: 1.5em; }
+.markdown-content h4 { font-size: 1.25em; }
+.markdown-content h5 { font-size: 1.1em; }
+.markdown-content h6 { font-size: 1em; color: #6a737d; }
+
+.markdown-content p {
+  font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  margin-top: 0;
+  margin-bottom: 1.2em;
+  line-height: 1.6;
+}
+
+.markdown-content a {
+  color: #0366d6;
+  text-decoration: none;
+  border-bottom: 1px solid #0366d6;
+  transition: border-bottom 0.3s ease;
+}
+
+.markdown-content a:hover {
+  border-bottom: 2px solid #0366d6;
+}
+
+.markdown-content strong {
+  font-weight: 600;
+}
+
+.markdown-content img {
+  max-width: 100%;
+  box-sizing: border-box;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.markdown-content code {
+  padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(27,31,35,0.05);
+  border-radius: 3px;
+  font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+.markdown-content pre {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f6f8fa;
+  border-radius: 6px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+}
+
+.markdown-content pre code {
+  display: inline;
+  max-width: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  line-height: inherit;
+  word-wrap: normal;
+  background-color: transparent;
+  border: 0;
+}
+
+.markdown-content blockquote {
+  padding: 0 1em;
+  color: #6a737d;
+  border-left: 0.25em solid #dfe2e5;
+  margin: 0 0 16px 0;
+  font-style: italic;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  padding-left: 2em;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.markdown-content li {
+  font-size: 16px;  /* 从 15px 改为 16px */
+  margin-bottom: 0.5em;
+}
+
+.markdown-content table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  border-spacing: 0;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+
+.markdown-content table th,
+.markdown-content table td {
+  padding: 8px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+.markdown-content table th {
+  font-weight: 600;
+  background-color: #f6f8fa;
+}
+
+.markdown-content table tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+.markdown-content table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+/* Quill 编辑器样式 */
+.markdown-style-editor {
+  font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.8;
+  color: #333;
+}
+
+:deep(.ql-editor) {
+  font-size: 16px;
+  font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+}
+
+:deep(.ql-editor p) {
+  margin-bottom: 1.2em;
+  line-height: 1.6;
+}
+
+/* 其他样式保持不变 */
+
+.node-title {
+  font-size: 1.4em;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #ecf0f1;
+  transition: color 0.3s ease;
+}
+
+.node-title:hover {
+  color: #3498db;
+}
+
+.custom-card {
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.custom-card:hover {
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.markdown-content {
+  font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #34495e;
+}
+
+.markdown-content h1 { font-size: 1.8em; }
+.markdown-content h2 { font-size: 1.5em; }
+.markdown-content h3 { font-size: 1.3em; }
+.markdown-content h4 { font-size: 1.2em; }
+.markdown-content h5 { font-size: 1.1em; }
+.markdown-content h6 { font-size: 1em; }
+
+.markdown-content p {
+  margin-bottom: 1em;
+}
+
+.markdown-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.markdown-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.markdown-content code {
+  background-color: #f8f8f8;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  font-size: 0.9em;
+}
+
+.markdown-content pre {
+  background-color: #f8f8f8;
+  padding: 15px;
+  border-radius: 5px;
+  overflow-x: auto;
+}
+
+.markdown-content blockquote {
+  border-left: 4px solid #3498db;
+  padding-left: 15px;
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+/* ... 其他样式保持不变 ... */
 </style>
-
-
-
-
 
