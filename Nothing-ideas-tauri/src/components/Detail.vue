@@ -487,7 +487,7 @@ img {
 }
 
 .project-title {
-  font-size: 1.5em;
+  font-size: 1.2em;
   font-weight: 500;
   color: #333333;
   margin: 0;
