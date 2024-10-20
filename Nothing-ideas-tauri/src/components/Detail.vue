@@ -2,21 +2,16 @@
   <div class="common-layout">
     <el-container>
       <!-- Header -->
-      <el-header
-        style="background-color: #a0cfff;padding: 0%;display: flex;justify-content: space-between; align-items: center;padding: 20px;">
-        <div style="display: flex;align-items: center;">
-          <el-button :icon="Back" style="box-shadow: none;" @click="$router.push('/')">返回</el-button>
-          <h1 style="margin-left: 20px; color: #337ecc;font-size: 1em;">{{ this.projectname }}</h1>
+      <el-header class="custom-header">
+        <div class="header-left">
+          <el-button class="back-button" :icon="Back" @click="$router.push('/')">返回</el-button>
+          <h1 class="project-title">{{ this.projectname }}</h1>
         </div>
 
-        <el-button-group class="btn-group">
-          <el-button type="primary" size="mini" plain style="box-shadow: none;"
-            @click="dialogFormVisible = true">新增节点</el-button>
-          <el-button type="success" size="mini" plain style="box-shadow: none;border-color: none;"
-            :disabled="this.projectstaus === '已闭环'" @click="updateProjectStatus()">流程闭环</el-button>
-          <el-button type="warning" size="mini" plain style="box-shadow: none;border-color: none;"
-            :disabled="this.projectstaus === '未闭环'" @Click="recoverProjectStatus()">恢复流程</el-button>
-          <!-- <el-button size="mini" plain style="box-shadow: none;" @click="fetchPreoject()">测试按钮{{ project_id}}</el-button> -->
+        <el-button-group class="header-right">
+          <el-button type="primary" plain @click="dialogFormVisible = true">新增节点</el-button>
+          <el-button type="success" plain :disabled="this.projectstaus === '已闭环'" @click="updateProjectStatus()">流程闭环</el-button>
+          <el-button type="warning" plain :disabled="this.projectstaus === '未闭环'" @Click="recoverProjectStatus()">恢复流程</el-button>
         </el-button-group>
       </el-header>
       <!-- Main -->
@@ -471,4 +466,57 @@ img {
     max-width: 100%;
     border-radius: 5px;
 }
+
+.custom-header {
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  height: 60px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.back-button {
+  margin-right: 15px;
+}
+
+.project-title {
+  font-size: 1.2em;
+  color: #333;
+  margin: 0;
+}
+
+.header-right .el-button {
+  margin-left: 10px;
+}
+
+.el-button {
+  border-radius: 4px;
+}
+
+/* 可以根据需要调整按钮的具体样式 */
+.el-button--primary.is-plain {
+  color: #409EFF;
+  border-color: #b3d8ff;
+  background-color: #ecf5ff;
+}
+
+.el-button--success.is-plain {
+  color: #67C23A;
+  border-color: #c2e7b0;
+  background-color: #f0f9eb;
+}
+
+.el-button--warning.is-plain {
+  color: #E6A23C;
+  border-color: #f5dab1;
+  background-color: #fdf6ec;
+}
 </style>
+
