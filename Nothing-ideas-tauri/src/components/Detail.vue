@@ -695,14 +695,92 @@ img {
   color: #333;
 }
 
-:deep(.ql-editor) {
+.ql-editor {
   font-size: 16px;
-  font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.6;
+  color: #34495e;
 }
 
-:deep(.ql-editor p) {
+.ql-editor p {
+  font-size: 16px;
   margin-bottom: 1.2em;
   line-height: 1.6;
+}
+
+.ql-editor ol,
+.ql-editor ul {
+  padding-left: 2em;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.ql-editor li {
+  font-size: 16px;
+  margin-bottom: 0.5em;
+}
+
+.ql-editor pre {
+  background-color: #f8f8f8;
+  padding: 15px;
+  border-radius: 5px;
+  overflow-x: auto;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.ql-editor blockquote {
+  border-left: 4px solid #3498db;
+  padding-left: 15px;
+  color: #7f8c8d;
+  font-style: italic;
+  margin: 0 0 16px 0;
+}
+
+.ql-editor h1,
+.ql-editor h2,
+.ql-editor h3,
+.ql-editor h4,
+.ql-editor h5,
+.ql-editor h6 {
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #2c3e50;
+}
+
+.ql-editor h1 { font-size: 2em; border-bottom: 1px solid #eaecef; padding-bottom: 0.3em; }
+.ql-editor h2 { font-size: 1.75em; border-bottom: 1px solid #eaecef; padding-bottom: 0.3em; }
+.ql-editor h3 { font-size: 1.5em; }
+.ql-editor h4 { font-size: 1.25em; }
+.ql-editor h5 { font-size: 1.1em; }
+.ql-editor h6 { font-size: 1em; color: #6a737d; }
+
+.ql-editor a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.ql-editor a:hover {
+  border-bottom-color: #3498db;
+}
+
+.ql-editor code {
+  background-color: #f8f8f8;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  font-size: 0.9em;
+}
+
+.ql-editor img {
+  max-width: 100%;
+  box-sizing: border-box;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 /* 其他样式保持不变 */
@@ -786,4 +864,6 @@ img {
 
 /* ... 其他样式保持不变 ... */
 </style>
+
+
 
