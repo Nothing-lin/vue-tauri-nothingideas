@@ -29,8 +29,9 @@
                   Date(item.project_create_time)) }}天</el-button>
                 <el-button plain :type="item.project_status === '未闭环' ? 'warning' : 'success'" size="mini">{{
                   item.project_status }}</el-button>
-                <span class="text" style="margin-left: 10px; cursor: pointer;" @click="$router.push('/Detail/' + item.project_id)">{{
-                  item.project_title }}</span>
+                <span class="project-title" @click="$router.push('/Detail/' + item.project_id)">
+                  {{ item.project_title }}
+                </span>
               </div>
               <el-button type="danger" link v-if="IsDeleted" @click="deleteProjectconfirm(item.project_id)">X</el-button>
             </div>
@@ -252,3 +253,32 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.project-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-left: 15px;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.3s ease;
+  display: inline-block;
+}
+
+.project-title:hover {
+  color: #409EFF;
+  animation: bounce 0.5s ease;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+</style>
