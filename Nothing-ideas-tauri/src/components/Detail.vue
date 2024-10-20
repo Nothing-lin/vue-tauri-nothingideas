@@ -209,7 +209,7 @@ export default {
       await db.close();
       this.fetchPreojectNodes();
       this.dialogFormVisible = false;
-      // 清空表单数据
+      // 清空表单数��
       this.form.name = ''
       this.editorContent = ''
       this.type_value = ''
@@ -469,7 +469,7 @@ img {
 
 .custom-header {
   background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -483,13 +483,37 @@ img {
 }
 
 .back-button {
-  margin-right: 15px;
+  margin-right: 20px;
 }
 
 .project-title {
-  font-size: 1.2em;
-  color: #333;
+  font-size: 1.5em;
+  font-weight: 500;
+  color: #333333;
   margin: 0;
+  padding: 0 10px;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.project-title::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 10px;
+  width: calc(100% - 20px);
+  height: 2px;
+  background-color: #409EFF;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.project-title:hover {
+  color: #409EFF;
+}
+
+.project-title:hover::after {
+  transform: scaleX(1);
 }
 
 .header-right .el-button {
@@ -519,4 +543,8 @@ img {
   background-color: #fdf6ec;
 }
 </style>
+
+
+
+
 
