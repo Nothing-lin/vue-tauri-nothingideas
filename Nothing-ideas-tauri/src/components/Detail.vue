@@ -2,22 +2,37 @@
   <div class="common-layout">
     <el-container>
       <!-- Header -->
-      <el-header class="custom-header">
+      <el-header class="custom-header fixed-header">
         <div class="header-left">
           <el-button class="back-button" :icon="Back" @click="$router.push('/')">返回</el-button>
           <h1 class="project-title">{{ this.projectname }}</h1>
         </div>
 
         <el-button-group class="header-right">
-          <el-button type="primary" plain @click="dialogFormVisible = true">新增节点</el-button>
-          <el-button type="success" plain :disabled="this.projectstaus === '已闭环'" @click="updateProjectStatus()">流程闭环</el-button>
-          <el-button type="warning" plain :disabled="this.projectstaus === '未闭环'" @Click="recoverProjectStatus()">恢复流程</el-button>
-          <!-- 新增打印按钮 -->
-          <el-button type="info" plain @click="printToPDF">打印为PDF</el-button>
+          <el-button class="custom-button add-button" @click="dialogFormVisible = true">
+            <i class="el-icon-plus"></i> 新增节点
+          </el-button>
+          <el-button 
+            class="custom-button close-button" 
+            :disabled="this.projectstaus === '已闭环'" 
+            @click="updateProjectStatus()"
+          >
+            <i class="el-icon-check"></i> 流程闭环
+          </el-button>
+          <el-button 
+            class="custom-button reopen-button" 
+            :disabled="this.projectstaus === '未闭环'" 
+            @click="recoverProjectStatus()"
+          >
+            <i class="el-icon-refresh"></i> 恢复流程
+          </el-button>
+          <el-button class="custom-button print-button" @click="printToPDF">
+            <i class="el-icon-printer"></i> 打印为PDF
+          </el-button>
         </el-button-group>
       </el-header>
       <!-- Main -->
-      <el-main style="width: 100%;margin: auto;">
+      <el-main class="main-content">
         <div class="timeLine-container">
           <el-container>
             <el-main class="timeline-list-container">
@@ -306,7 +321,7 @@ export default {
       this.$refs.Editeditor.setHTML('')
       this.node_item = {};
     },
-    // 将date转为”年-月-日“格式
+    // 将date转为”年-月-日“式
     formatDate(date) {
       const year = date.getFullYear();
       const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -992,7 +1007,103 @@ img {
     border: none !important;
   }
 }
+
+.custom-button {
+  transition: all 0.3s ease;
+}
+
+.add-button {
+  color: #67C23A;
+  border-color: #c2e7b0;
+  background-color: #f0f9eb;
+}
+
+.add-button:hover {
+  color: #5daf34;
+  border-color: #b3e19d;
+  background-color: #e7f6e2;
+}
+
+.close-button {
+  color: #E6A23C;
+  border-color: #f5dab1;
+  background-color: #fdf6ec;
+}
+
+.close-button:hover {
+  color: #cf9236;
+  border-color: #f1c89d;
+  background-color: #faecd8;
+}
+
+.reopen-button {
+  color: #F56C6C;
+  border-color: #fbc4c4;
+  background-color: #fef0f0;
+}
+
+.reopen-button:hover {
+  color: #dd6161;
+  border-color: #fab6b6;
+  background-color: #fde2e2;
+}
+
+.print-button {
+  color: #909399;
+  border-color: #d3d4d6;
+  background-color: #f4f4f5;
+}
+
+.print-button:hover {
+  color: #82848a;
+  border-color: #c6c8cc;
+  background-color: #e9e9eb;
+}
+
+.custom-button:active {
+  opacity: 0.8;
+}
+
+.custom-button.is-disabled,
+.custom-button.is-disabled:hover,
+.custom-button.is-disabled:focus,
+.custom-button.is-disabled:active {
+  color: #c0c4cc;
+  cursor: not-allowed;
+  background-image: none;
+  background-color: #fff;
+  border-color: #ebeef5;
+}
+
+/* ... 其他样式保持不变 ... */
+
+.common-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.main-content {
+  margin-top: 60px; /* 这里的值应该等于 header 的高度 */
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+/* 其他样式保持不变 */
 </style>
+
+
+
 
 
 
