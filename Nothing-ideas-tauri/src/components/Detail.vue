@@ -694,7 +694,7 @@ img {
   color: #2c3e50;
 }
 
-.markdown-content h1 { font-size: 2em; border-bottom: 1px solid #eaecef; padding-bottom: 0.3em; }
+.markdown-content h1 { font-size: 2em; border-bottom: 1px solid #eaecef; padding-bottom: 0.3em; margin-top: 0.5em!important;}
 .markdown-content h2 { font-size: 1.75em; border-bottom: 1px solid #eaecef; padding-bottom: 0.3em; }
 .markdown-content h3 { font-size: 1.5em; }
 .markdown-content h4 { font-size: 1.25em; }
@@ -707,6 +707,7 @@ img {
   margin-top: 0;
   margin-bottom: 1.2em;
   line-height: 1.6;
+  color: black;
 }
 
 .markdown-content a {
@@ -910,7 +911,7 @@ img {
 /* 其他样式保持不变 */
 
 .node-title {
-  font-size: 1.2em;
+  font-size: 18px;
   font-weight: 600;
   color: #2c3e50;
   margin-top: 0;
@@ -918,6 +919,8 @@ img {
   padding-bottom: 10px;
   border-bottom: 1px solid #ecf0f1;
   transition: color 0.3s ease;
+  line-height: 1.4;
+  letter-spacing: 0.5px;
 }
 
 .node-title:hover {
@@ -1103,6 +1106,7 @@ img {
 
 /* 其他样式保持不变 */
 </style>
+
 
 
 
