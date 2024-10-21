@@ -15,7 +15,6 @@
               <el-button-group class="btn-group">
                 <el-button type="primary" size="mini" @click="dialogFormVisible = true">新增</el-button>
                 <el-button type="danger" size="mini" @click="showDeleteButton">删除</el-button>
-                <el-button type="success" size="mini" @click="exportDatabase">导出数据库</el-button>
               </el-button-group>
             </div>
           </template>
@@ -81,8 +80,6 @@
 import Database from "tauri-plugin-sql-api";
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { reactive, ref } from 'vue'
-import { save } from '@tauri-apps/api/dialog';
-import { writeBinaryFile } from '@tauri-apps/api/fs';
 
 export default {
   data() {
@@ -181,10 +178,10 @@ export default {
     showDeleteButton() {
       this.IsDeleted = !this.IsDeleted;// 切换删除按钮显示状态
     },
-    //以下为是否确认删除弹出窗口messageBox的功能
+    //以下为是否确删除弹出窗口messageBox的功能
     async deleteProjectconfirm(projectId) {
       ElMessageBox.confirm(
-        '是否确定删除这条���据?',
+        '是否确定删除这条数据?',
         '删除操作',
         {
           confirmButtonText: '确定',
@@ -251,39 +248,6 @@ export default {
       form
     };
 
-  },
-
-  async exportDatabase() {
-    try {
-      // 打开保存文件对话框
-      const filePath = await save({
-        filters: [{
-          name: 'SQLite Database',
-          extensions: ['db']
-        }]
-      });
-
-      if (filePath) {
-        // 读取数据库文件
-        const db = await Database.load("sqlite:NothingIdeas.db");
-        const dbContent = await db.dump();
-        await db.close();
-
-        // 将数据库内容写入选择的文件
-        await writeBinaryFile(filePath, dbContent);
-
-        ElMessage({
-          type: 'success',
-          message: '数据库导出成功',
-        });
-      }
-    } catch (error) {
-      console.error('导出数据库时出错:', error);
-      ElMessage({
-        type: 'error',
-        message: '导出数据库失败',
-      });
-    }
   },
 }
 </script>
