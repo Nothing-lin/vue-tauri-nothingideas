@@ -385,7 +385,7 @@ export default {
                 padding: 0;
               }
               .project-title {
-                font-size: 18px;
+                font-size: 24px;
                 font-weight: bold;
                 color: #2c3e50;
                 text-align: center;
@@ -398,14 +398,16 @@ export default {
                 justify-content: space-between;
                 align-items: center;
                 margin-bottom: 10px;
-                font-size: 14px;
+                font-size: 16px;
               }
               .node-title {
                 font-weight: bold;
                 color: #2c3e50;
+                font-size: 16px;
               }
               .node-type, .node-time {
                 color: #7f8c8d;
+                font-size: 16px;
               }
               .page-break {
                 page-break-before: always;
@@ -1101,6 +1103,7 @@ img {
 
 /* 其他样式保持不变 */
 </style>
+
 
 
 
