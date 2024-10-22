@@ -54,10 +54,19 @@
 
 
           <!-- 新增-对话框 -->
-          <el-dialog v-model="dialogFormVisible" title="新增NothingIdeas项目" width="500">
-            <el-form :model="form">
+          <el-dialog 
+            v-model="dialogFormVisible" 
+            title="新增NothingIdeas项目" 
+            width="500"
+          >
+            <el-form :model="form" @submit.prevent="addProject">
               <el-form-item label="项目名称" :label-width="formLabelWidth">
-                <el-input v-model="form.name" autocomplete="off" />
+                <el-input 
+                  v-model="form.name" 
+                  autocomplete="off" 
+                  ref="newProjectInput"
+                  @keyup.enter.prevent
+                />
               </el-form-item>
             </el-form>
             <template #footer>
@@ -89,6 +98,7 @@ export default {
       currentPage: 1,        // 当前页码
       pageSize: 10,           // 每页显示条数
       IsDeleted: false,      // 是否删除
+      isAdding: false, // 新增：用于防止重复提交
     };
   },
   computed: {
@@ -218,14 +228,48 @@ export default {
     },
     // ---------- 以下为新增项目的功能 ----------------
     async addProject() {
-      const db = await Database.load("sqlite:NothingIdeas.db");
-      const query = `INSERT INTO nothing_project (project_title, project_status, project_create_time) VALUES (?, ?, ?)`;
-      const params = [this.form.name, '未闭环', new Date()];
-      await db.execute(query, params);
-      await db.close();
-      this.dialogFormVisible = false; // 关闭对话框
-      this.fetchProjects(); // 重新获取数据
-  }},
+      if (this.isAdding) return; // 防止重复提交
+      this.isAdding = true;
+
+      if (!this.form.name.trim()) {
+        // 如果项目名称为空,不执行添加操作
+        this.isAdding = false;
+        return;
+      }
+
+      try {
+        const db = await Database.load("sqlite:NothingIdeas.db");
+        const query = `INSERT INTO nothing_project (project_title, project_status, project_create_time) VALUES (?, ?, ?)`;
+        const params = [this.form.name.trim(), '未闭环', new Date()];
+        await db.execute(query, params);
+        await db.close();
+        this.dialogFormVisible = false; // 关闭对话框
+        await this.fetchProjects(); // 重新获取数据
+        this.form.name = ''; // 清空表单
+        ElMessage.success('项目添加成功');
+      } catch (error) {
+        console.error('添加项目失败:', error);
+        ElMessage.error('添加项目失败，请重试');
+      } finally {
+        this.isAdding = false;
+      }
+    },
+
+    watch: {
+      dialogFormVisible(newVal) {
+        if (newVal) {
+          // 当对话框打开时,聚焦到输入框
+          this.$nextTick(() => {
+            this.$refs.newProjectInput.focus();
+          });
+        } else {
+          // 当对话框关闭时，重置表单
+          this.form.name = '';
+          this.isAdding = false;
+        }
+      }
+    }
+  },
   setup() {
     // ---------- 以下为新增项目的功能 ----------------
     const dialogFormVisible = ref(false)
