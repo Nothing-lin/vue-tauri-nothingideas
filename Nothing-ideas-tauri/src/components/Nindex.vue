@@ -279,4 +279,15 @@ export default {
     transform: translateX(5px);
   }
 }
+
+.project-title[data-v-67cf175d] {
+    top: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    margin-left: 15px;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.3s ease;
+    display: inline-block;
+}
 </style>

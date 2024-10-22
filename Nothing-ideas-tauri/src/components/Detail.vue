@@ -666,12 +666,13 @@ img {
 }
 
 .back-button {
-  margin-right: 30px; /* 增加与搜索框的间距 */
+  margin-right: 10px; /* 增加与搜索框的间距 */
 }
 
+
 .project-title {
-  margin: 0 30px;
-  font-size: 1.5em;
+  margin: 0 10px;
+  font-size: 1em;
   font-weight: 600;
   color: #2c3e50;
   white-space: nowrap;
