@@ -32,13 +32,10 @@
 
           <!-- 内容  -->
           <template v-for="item in displayedProjects" :key="item.project_id">
-            <div
-              style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; margin-bottom: 15px;">
-              <div class="item" style=" align-items: center;">
-                <el-button plain size="mini" style="width: 60px;">{{ daysSinceCreation(new
-                  Date(item.project_create_time)) }}天</el-button>
-                <el-button plain :type="item.project_status === '未闭环' ? 'warning' : 'success'" size="mini">{{
-                  item.project_status }}</el-button>
+            <div class="item-container">
+              <div class="item">
+                <el-button plain size="mini" style="width: 60px;">{{ daysSinceCreation(new Date(item.project_create_time)) }}天</el-button>
+                <el-button plain :type="item.project_status === '未闭环' ? 'warning' : 'success'" size="mini">{{ item.project_status }}</el-button>
                 <span class="project-title" @click="$router.push('/Detail/' + item.project_id)">
                   {{ item.project_title }}
                 </span>
@@ -318,10 +315,9 @@ export default {
   font-size: 16px;
   font-weight: 500;
   color: #333;
-  margin-left: 15px;
+  margin-left: 10px;
   cursor: pointer;
   transition: color 0.3s ease, transform 0.3s ease;
-  display: inline-block;
 }
 
 .project-title:hover {
@@ -339,17 +335,6 @@ export default {
   75% {
     transform: translateX(5px);
   }
-}
-
-.project-title[data-v-67cf175d] {
-    top: 12px;
-    font-size: 16px;
-    font-weight: 500;
-    color: #333;
-    margin-left: 15px;
-    cursor: pointer;
-    transition: color 0.3s ease, transform 0.3s ease;
-    display: inline-block;
 }
 
 .card-header {
@@ -374,6 +359,28 @@ export default {
 .search-input {
   width: 100%;
 }
+
+.item-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.item-buttons {
+  margin-bottom: 5px;
+}
+
+/* 确保按钮和文本在同一行 */
+.el-button + .el-button,
+.el-button + .project-title {
+  margin-left: 10px;
+}
 </style>
-
-
