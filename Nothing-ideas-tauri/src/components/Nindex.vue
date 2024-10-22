@@ -9,9 +9,20 @@
         <el-card style="max-width: 70vw; margin: auto;">
           <!-- 页头 -->
           <template #header>
-            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-              <h1 class="header-title" style="margin: 10px;font-family: cursive; text-shadow: 0 0 black;">NothingIdeas想法流程
-              </h1>
+            <div class="card-header">
+              <h1 class="header-title">NothingIdeas想法流程</h1>
+              <div class="search-container">
+                <el-input
+                  v-model="searchKeyword"
+                  placeholder="搜索项目..."
+                  class="search-input"
+                  @keyup.enter="performSearch"
+                >
+                  <template #append>
+                    <el-button @click="performSearch" icon="el-icon-search">搜索</el-button>
+                  </template>
+                </el-input>
+              </div>
               <el-button-group class="btn-group">
                 <el-button type="primary" size="mini" @click="dialogFormVisible = true">新增</el-button>
                 <el-button type="danger" size="mini" @click="showDeleteButton">删除</el-button>
@@ -20,7 +31,7 @@
           </template>
 
           <!-- 内容  -->
-          <template v-for="item in NothingProject">
+          <template v-for="item in displayedProjects" :key="item.project_id">
             <div
               style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; margin-bottom: 15px;">
               <div class="item" style=" align-items: center;">
@@ -40,8 +51,14 @@
           <template #footer>
 
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <el-pagination background layout="prev, pager, next" :total="totalItems" :current-page.sync="currentPage"
-                :page-size="pageSize" @current-change="handleCurrentChange" />
+              <el-pagination 
+                background 
+                layout="prev, pager, next" 
+                :total="filteredProjects.length" 
+                :current-page.sync="currentPage"
+                :page-size="pageSize" 
+                @current-change="handleCurrentChange" 
+              />
 
               <el-button-group class="btn-group">
                 <el-button type="primary" size="mini" plain @click="allButton">全部</el-button>
@@ -93,25 +110,33 @@ import { reactive, ref } from 'vue'
 export default {
   data() {
     return {
-      NothingProject: [],    // 数据列表
-      totalItems: 0,         // 总数据条数
-      currentPage: 1,        // 当前页码
-      pageSize: 10,           // 每页显示条数
+      allProjects: [],    // 存储所有项目的数组
+      currentPage: 1,     // 当前页码
+      pageSize: 10,       // 每页显示条数
+      searchKeyword: '',  // 搜索关键词
       IsDeleted: false,      // 是否删除
       isAdding: false, // 新增：用于防止重复提交
     };
   },
   computed: {
-    // 根据当前页码和每页显示条数，计算出当前页的数据
-    paginatedProjects() {
-      const startIndex = (this.currentPage - 1) * this.pageSize;
-      const endIndex = startIndex + this.pageSize;
-      return this.NothingProject.slice(startIndex, endIndex);
+    filteredProjects() {
+      if (!this.searchKeyword) {
+        return this.allProjects;
+      }
+      const keyword = this.searchKeyword.toLowerCase();
+      return this.allProjects.filter(project => 
+        project.project_title.toLowerCase().includes(keyword) ||
+        project.project_status.toLowerCase().includes(keyword)
+      );
+    },
+    displayedProjects() {
+      const start = (this.currentPage - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      return this.filteredProjects.slice(start, end);
     }
-
   },
   async created() {
-    await this.fetchProjects();
+    await this.fetchAllProjects();
     //监听数据加载完成事件，然后更新界面
     this.$onces('data-loaded', () => {
       this.$forceUpdate();// 强制刷新界面
@@ -120,26 +145,14 @@ export default {
   },
   methods: {
     // -------------------------- 以下为分页相关方法 --------------------------
-    async fetchProjects() {
+    async fetchAllProjects() {
       const db = await Database.load("sqlite:NothingIdeas.db");
-
-      // 查询总数据条数
-      const totalCount = await db.select("SELECT COUNT(*) as count FROM nothing_project");
-      this.totalItems = totalCount[0].count;
-
-      // 查询当前页数据
-      const offset = (this.currentPage - 1) * this.pageSize;
-      const query = `SELECT * FROM nothing_project order by project_create_time desc LIMIT ${this.pageSize} OFFSET ${offset}`;
-      const NothingProject = await db.select(query);
-
-      this.NothingProject = NothingProject; // 更新数据列表
+      const query = `SELECT * FROM nothing_project ORDER BY project_create_time DESC`;
+      this.allProjects = await db.select(query);
       await db.close();
-      // 数据加载完成后触发刷新事件
-      this.$emit('data-loaded');
     },
-    async handleCurrentChange(page) {
-      this.currentPage = page; // 更新当前页码
-      await this.fetchProjects(); // 重新获取数据
+    handleCurrentChange(page) {
+      this.currentPage = page;
     },
     // -------------------------- 以下为测试按钮相关方法 ----------------
     async testButton() {
@@ -165,14 +178,14 @@ export default {
     // ---------- 以下为【全部按钮】的功能 ----------------
     allButton() {
       this.currentPage = 1; // 回到第一页
-      this.fetchProjects(); // 重新获取数据
+      this.fetchAllProjects(); // 重新获取数据
     },
     // ---------- 以下为【已闭环按钮】的功能 ----------------
     async closedButton() {
       const db = await Database.load("sqlite:NothingIdeas.db");
       const query = `SELECT * FROM nothing_project where project_status = '已闭环'`;
       const NothingProject = await db.select(query);
-      this.NothingProject = NothingProject; // 更新数据列表
+      this.allProjects = NothingProject; // 更新数据列表
       await db.close();
     },
     // ---------- 以下为【未闭环按钮】的功能 ----------------
@@ -180,7 +193,7 @@ export default {
       const db = await Database.load("sqlite:NothingIdeas.db");
       const query = `SELECT * FROM nothing_project where project_status = '未闭环'`;
       const NothingProject = await db.select(query);
-      this.NothingProject = NothingProject; // 更新数据列表
+      this.allProjects = NothingProject; // 更新数据列表
       await db.close();
 
     },
@@ -203,7 +216,7 @@ export default {
               const query = `DELETE FROM nothing_project WHERE project_id = ${projectId}`;
               await db.execute(query);
               await db.close();
-              this.fetchProjects(); // 重新获取数据
+              this.fetchAllProjects(); // 重新获取数据
               done();
 
             } else if (action === 'cancel') {
@@ -244,7 +257,7 @@ export default {
         await db.execute(query, params);
         await db.close();
         this.dialogFormVisible = false; // 关闭对话框
-        await this.fetchProjects(); // 重新获取数据
+        await this.fetchAllProjects(); // 重新获取数据
         this.form.name = ''; // 清空表单
         ElMessage.success('项目添加成功');
       } catch (error) {
@@ -253,6 +266,10 @@ export default {
       } finally {
         this.isAdding = false;
       }
+    },
+    performSearch() {
+      this.currentPage = 1; // 重置到第一页
+      // 不需要重新获取数据,因为我们已经有了所有项目
     },
 
     watch: {
@@ -334,4 +351,29 @@ export default {
     transition: color 0.3s ease, transform 0.3s ease;
     display: inline-block;
 }
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.header-title {
+  margin: 10px 0;
+  font-family: cursive;
+  text-shadow: 0 0 black;
+}
+
+.search-container {
+  flex-grow: 1;
+  margin: 0 20px;
+  max-width: 400px;
+}
+
+.search-input {
+  width: 100%;
+}
 </style>
+
+
