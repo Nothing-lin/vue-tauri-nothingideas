@@ -5,16 +5,21 @@
       <el-header class="custom-header fixed-header">
         <div class="header-left">
           <el-button class="back-button" :icon="Back" @click="$router.push('/')">返回</el-button>
-          <h1 class="project-title" v-show="!isSearching">{{ this.projectname }}</h1>
-          <el-input
-            v-show="isSearching"
-            v-model="searchKeyword"
-            placeholder="搜索节点..."
-            class="search-input"
-            @keyup.enter="performSearch"
-            @blur="hideSearch"
-            ref="searchInput"
-          />
+          <h1 class="project-title" :class="{ 'title-hide': isSearching }">{{ this.projectname }}</h1>
+          <div class="search-wrapper" :class="{ 'search-active': isSearching }">
+            <el-input
+              v-model="searchKeyword"
+              placeholder="搜索节点..."
+              class="search-input"
+              @keyup.enter="performSearch"
+              @blur="hideSearch"
+              ref="searchInput"
+            >
+              <template #prefix>
+                <i class="el-icon-search"></i>
+              </template>
+            </el-input>
+          </div>
         </div>
 
         <el-button-group class="header-right">
@@ -648,33 +653,41 @@ img {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 30px; /* 增加左右padding */
   height: 60px;
+  overflow: hidden; /* 防止搜索框溢出 */
 }
 
 .header-left {
   display: flex;
   align-items: center;
   flex: 1;
+  position: relative; /* 为绝对定位的搜索框提供参考 */
 }
 
 .back-button {
-  margin-right: 20px;
+  margin-right: 30px; /* 增加与搜索框的间距 */
 }
 
 .project-title {
-  margin: 0 20px;
+  margin: 0 30px;
+  font-size: 1.5em;
+  font-weight: 600;
+  color: #2c3e50;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: all 0.3s ease;
+  position: relative;
+  padding-bottom: 5px;
 }
 
 .project-title::after {
   content: '';
   position: absolute;
-  bottom: -3px;
-  left: 10px;
-  width: calc(100% - 20px);
+  bottom: 0;
+  left: 0;
+  width: 100%;
   height: 2px;
   background-color: #409EFF;
   transform: scaleX(0);
@@ -687,6 +700,11 @@ img {
 
 .project-title:hover::after {
   transform: scaleX(1);
+}
+
+.project-title.title-hide {
+  opacity: 0;
+  transform: translateY(-20px);
 }
 
 .header-right .el-button {
@@ -1164,7 +1182,86 @@ img {
 }
 
 /* ... 其他样式 ... */
+
+.search-wrapper {
+  position: absolute;
+  left: 120px; /* 调整这个值以适应您的布局 */
+  right: 120px; /* 调整这个值以控制搜索框的宽度 */
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 1;
+}
+
+.search-wrapper.search-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.search-input {
+  width: 100%;
+  max-width: 400px; /* 减小最大宽度 */
+}
+
+.search-input :deep(.el-input__inner) {
+  border: none;
+  border-radius: 20px;
+  background-color: #f5f7fa;
+  padding-left: 40px;
+  height: 40px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.search-input :deep(.el-input__inner):focus {
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.search-input :deep(.el-input__prefix) {
+  left: 15px;
+  font-size: 18px;
+  color: #909399;
+}
+
+.search-button {
+  transition: all 0.3s ease;
+}
+
+.search-button:hover {
+  transform: scale(1.05);
+}
+
+/* 添加一个淡入淡出的背景效果 */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.search-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 25px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.search-wrapper.search-active::before {
+  opacity: 1;
+  animation: fadeIn 0.3s ease;
+}
+
+/* ... 其他样式保持不变 ... */
 </style>
+
+
+
 
 
 
