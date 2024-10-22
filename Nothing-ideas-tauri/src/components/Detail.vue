@@ -5,18 +5,16 @@
       <el-header class="custom-header fixed-header">
         <div class="header-left">
           <el-button class="back-button" :icon="Back" @click="$router.push('/')">返回</el-button>
-          <h1 class="project-title">{{ this.projectname }}</h1>
-        </div>
-
-        <!-- 添加搜索框和按钮 -->
-        <div class="search-container">
+          <h1 class="project-title" v-show="!isSearching">{{ this.projectname }}</h1>
           <el-input
+            v-show="isSearching"
             v-model="searchKeyword"
             placeholder="搜索节点..."
             class="search-input"
-            @keyup.enter="searchNodes"
+            @keyup.enter="performSearch"
+            @blur="hideSearch"
+            ref="searchInput"
           />
-          <el-button @click="searchNodes" type="primary" icon="el-icon-search">搜索</el-button>
         </div>
 
         <el-button-group class="header-right">
@@ -39,6 +37,9 @@
           </el-button>
           <el-button class="custom-button print-button" @click="printToPDF">
             <i class="el-icon-printer"></i> 打印为PDF
+          </el-button>
+          <el-button class="custom-button search-button" @click="showSearch">
+            <i class="el-icon-search"></i> 搜索
           </el-button>
         </el-button-group>
       </el-header>
@@ -202,6 +203,7 @@ export default {
         }
       },
       searchKeyword: '',
+      isSearching: false,
     }
   },
   computed: {
@@ -463,9 +465,22 @@ export default {
         printWindow.close();
       };
     },
-    searchNodes() {
-      // 触发计算属性重新计算
+    showSearch() {
+      this.isSearching = true;
+      this.$nextTick(() => {
+        this.$refs.searchInput.focus();
+      });
+    },
+    hideSearch() {
+      setTimeout(() => {
+        this.isSearching = false;
+        this.searchKeyword = '';
+      }, 200);
+    },
+    performSearch() {
+      // 执行搜索逻辑
       this.$forceUpdate();
+      this.hideSearch();
     },
   },
   setup() {
@@ -640,6 +655,7 @@ img {
 .header-left {
   display: flex;
   align-items: center;
+  flex: 1;
 }
 
 .back-button {
@@ -647,13 +663,10 @@ img {
 }
 
 .project-title {
-  font-size: 1.2em;
-  font-weight: 500;
-  color: #333333;
-  margin: 0;
-  padding: 0 10px;
-  position: relative;
-  transition: color 0.3s ease;
+  margin: 0 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .project-title::after {
@@ -1152,6 +1165,7 @@ img {
 
 /* ... 其他样式 ... */
 </style>
+
 
 
 
