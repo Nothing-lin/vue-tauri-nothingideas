@@ -8,6 +8,17 @@
           <h1 class="project-title">{{ this.projectname }}</h1>
         </div>
 
+        <!-- 添加搜索框和按钮 -->
+        <div class="search-container">
+          <el-input
+            v-model="searchKeyword"
+            placeholder="搜索节点..."
+            class="search-input"
+            @keyup.enter="searchNodes"
+          />
+          <el-button @click="searchNodes" type="primary" icon="el-icon-search">搜索</el-button>
+        </div>
+
         <el-button-group class="header-right">
           <el-button class="custom-button add-button" @click="dialogFormVisible = true">
             <i class="el-icon-plus"></i> 新增节点
@@ -39,9 +50,13 @@
               <!-- 时间轴 -->
               <div class="block">
                 <el-timeline>
-                  <!-- node节点列表 -->
-                  <el-timeline-item :timestamp="formatDate(new Date(item.node_create_time))" placement="top" v-for="item in NothingProjectNodes"
-                    :key="item.node_id">
+                  <!-- 修改这里,使用过滤后的节点列表 -->
+                  <el-timeline-item 
+                    :timestamp="formatDate(new Date(item.node_create_time))" 
+                    placement="top" 
+                    v-for="item in filteredNodes"
+                    :key="item.node_id"
+                  >
                     <template v-slot:dot>
                       <!-- 使用 dot 插槽自定义小圆点 -->
                       <span class="custom-dot" :style="{ backgroundColor: item.node_type === '拓展' ? 'red' : 'none' }">{{item.node_type }}</span>
@@ -185,7 +200,21 @@ export default {
             ['link', 'image']
           ]
         }
+      },
+      searchKeyword: '',
+    }
+  },
+  computed: {
+    filteredNodes() {
+      if (!this.searchKeyword) {
+        return this.NothingProjectNodes;
       }
+      const keyword = this.searchKeyword.toLowerCase();
+      return this.NothingProjectNodes.filter(node => 
+        node.node_title.toLowerCase().includes(keyword) ||
+        node.node_text.toLowerCase().includes(keyword) ||
+        node.node_type.toLowerCase().includes(keyword)
+      );
     }
   },
   async created() {
@@ -433,6 +462,10 @@ export default {
         printWindow.print();
         printWindow.close();
       };
+    },
+    searchNodes() {
+      // 触发计算属性重新计算
+      this.$forceUpdate();
     },
   },
   setup() {
@@ -1105,7 +1138,21 @@ img {
 }
 
 /* 其他样式保持不变 */
+
+.search-container {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.search-input {
+  width: 200px;
+  margin-right: 10px;
+}
+
+/* ... 其他样式 ... */
 </style>
+
 
 
 
