@@ -618,7 +618,7 @@ h2 {
 }
 
 /* blockquote样式 */
-blockquote {
+/* blockquote {
     border-top-color: #42a4ff;
     border-top-width: 2px;
     border-top-style: dashed;
@@ -628,7 +628,7 @@ blockquote {
     margin: 15px 12px;
     padding: 10px;
     color: #42a4ff;
-}
+} */
 pre.ql-syntax {
     width: 100%;
     white-space: pre-wrap;
@@ -832,7 +832,6 @@ img {
 .markdown-content blockquote {
   padding: 0 1em;
   color: #6a737d;
-  border-left: 0.25em solid #dfe2e5;
   margin: 0 0 16px 0;
   font-style: italic;
 }
@@ -919,7 +918,6 @@ img {
 }
 
 .ql-editor blockquote {
-  border-left: 4px solid #3498db;
   padding-left: 15px;
   color: #7f8c8d;
   font-style: italic;
@@ -1048,10 +1046,30 @@ img {
 }
 
 .markdown-content blockquote {
-  border-left: 4px solid #3498db;
-  padding-left: 15px;
-  color: #7f8c8d;
+  background-color: #f8f9fa;
+  padding: 10px 15px;
+  margin: 15px 0;
+  color: #34495e;
   font-style: italic;
+  font-size: 0.95em;
+  line-height: 1.6;
+  position: relative;
+  overflow: hidden;
+}
+
+.markdown-content blockquote::before {
+  content: '"';
+  font-size: 4em;
+  color: #3498db;
+  opacity: 0.1;
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  font-family: Georgia, serif;
+}
+
+.markdown-content blockquote p:last-child {
+  margin-bottom: 0;
 }
 
 /* ... 其他样式保持不变 ... */
