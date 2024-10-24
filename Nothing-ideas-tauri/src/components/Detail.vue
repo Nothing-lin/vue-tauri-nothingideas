@@ -189,6 +189,7 @@ export default {
       projectstaus: '',
       editorOption: {
         placeholder: '请输入内容...',
+        scrollingContainer: '.ql-editor', // 添加此行
         modules: {
           toolbar: [
             [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
@@ -1277,7 +1278,16 @@ img {
 }
 
 /* ... 其他样式保持不变 ... */
+
+.ql-editor {
+  max-height: 400px; /* 设置最大高度 */
+  overflow-y: auto;  /* 启用垂直滚动 */
+}
+
+/* ... 其他样式保持不变 ... */
 </style>
+
+
 
 
 
